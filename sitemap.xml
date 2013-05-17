@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset>
+    <sc:dataset>
+        <sc:datasetLabel> Data Set Ligado nos Politicos.com.br </sc:datasetLabel>
+        <sc:linkedDataPrefix> http://ligadonospoliticos.com.br/ </sc:linkedDataPrefix>
+        <sc:dataDumpLocation> 
+            http://ligadonospoliticos.com.br/content/download 
+        </sc:dataDumpLocation>
+        <changefreq>monthly</changefreq>
+    </sc:dataset>
+</urlset>
