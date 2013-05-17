@@ -1,0 +1,201 @@
+@prefix map: <file:/C:/wamp/www/d2r-server-0.7/mapping.n3#> .
+@prefix db: <> .
+@prefix vocab: <http://localhost:2020/vocab/resource/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix jdbc: <http://d2rq.org/terms/jdbc/> .
+@prefix d2r: <http://sites.wiwiss.fu-berlin.de/suhl/bizer/d2r-server/config.rdf#> .
+
+<> a d2r:Server;
+    rdfs:label "D2R Server";
+    d2r:baseURI <http://ligadonospoliticos.com.br/d2r-server-0.7>;
+    d2r:port 2020;
+    .
+	
+map:database a d2rq:Database;
+	d2rq:jdbcDriver "com.mysql.jdbc.Driver";
+	d2rq:jdbcDSN "jdbc:mysql://localhost/teste";
+	d2rq:username "root";
+	jdbc:autoReconnect "true";
+	jdbc:zeroDateTimeBehavior "convertToNull";
+	.
+
+# Table politico
+map:politico a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "politico/@@politico.id_politico@@";
+	d2rq:class vocab:politico;
+	d2rq:classDefinitionLabel "politico";
+	.
+map:politico__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property rdfs:label;
+	d2rq:pattern "politico #@@politico.id_politico@@";
+	.
+map:politico_id_politico a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_id_politico;
+	d2rq:propertyDefinitionLabel "politico id_politico";
+	d2rq:column "politico.id_politico";
+	d2rq:datatype xsd:int;
+	.
+map:politico_nome_civil a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_nome_civil;
+	d2rq:propertyDefinitionLabel "politico nome_civil";
+	d2rq:column "politico.nome_civil";
+	.
+map:politico_nome_parlamentar a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_nome_parlamentar;
+	d2rq:propertyDefinitionLabel "politico nome_parlamentar";
+	d2rq:column "politico.nome_parlamentar";
+	.
+map:politico_nome_pai a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_nome_pai;
+	d2rq:propertyDefinitionLabel "politico nome_pai";
+	d2rq:column "politico.nome_pai";
+	.
+map:politico_nome_mae a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_nome_mae;
+	d2rq:propertyDefinitionLabel "politico nome_mae";
+	d2rq:column "politico.nome_mae";
+	.
+map:politico_foto a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_foto;
+	d2rq:propertyDefinitionLabel "politico foto";
+	d2rq:column "politico.foto";
+	.
+map:politico_sexo a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_sexo;
+	d2rq:propertyDefinitionLabel "politico sexo";
+	d2rq:column "politico.sexo";
+	.
+map:politico_cor a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_cor;
+	d2rq:propertyDefinitionLabel "politico cor";
+	d2rq:column "politico.cor";
+	.
+map:politico_data_nascimento a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_data_nascimento;
+	d2rq:propertyDefinitionLabel "politico data_nascimento";
+	d2rq:column "politico.data_nascimento";
+	d2rq:datatype xsd:date;
+	.
+map:politico_estado_civil a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_estado_civil;
+	d2rq:propertyDefinitionLabel "politico estado_civil";
+	d2rq:column "politico.estado_civil";
+	.
+map:politico_ocupacao a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_ocupacao;
+	d2rq:propertyDefinitionLabel "politico ocupacao";
+	d2rq:column "politico.ocupacao";
+	.
+map:politico_grau_instrucao a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_grau_instrucao;
+	d2rq:propertyDefinitionLabel "politico grau_instrucao";
+	d2rq:column "politico.grau_instrucao";
+	.
+map:politico_nacionalidade a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_nacionalidade;
+	d2rq:propertyDefinitionLabel "politico nacionalidade";
+	d2rq:column "politico.nacionalidade";
+	.
+map:politico_cidade_nascimento a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_cidade_nascimento;
+	d2rq:propertyDefinitionLabel "politico cidade_nascimento";
+	d2rq:column "politico.cidade_nascimento";
+	.
+map:politico_estado_nascimento a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_estado_nascimento;
+	d2rq:propertyDefinitionLabel "politico estado_nascimento";
+	d2rq:column "politico.estado_nascimento";
+	.
+map:politico_cidade_eleitoral a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_cidade_eleitoral;
+	d2rq:propertyDefinitionLabel "politico cidade_eleitoral";
+	d2rq:column "politico.cidade_eleitoral";
+	.
+map:politico_estado_eleitoral a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_estado_eleitoral;
+	d2rq:propertyDefinitionLabel "politico estado_eleitoral";
+	d2rq:column "politico.estado_eleitoral";
+	.
+map:politico_site a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_site;
+	d2rq:propertyDefinitionLabel "politico site";
+	d2rq:column "politico.site";
+	.
+map:politico_email a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_email;
+	d2rq:propertyDefinitionLabel "politico email";
+	d2rq:column "politico.email";
+	.
+map:politico_cargo a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_cargo;
+	d2rq:propertyDefinitionLabel "politico cargo";
+	d2rq:column "politico.cargo";
+	.
+map:politico_cargo_uf a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_cargo_uf;
+	d2rq:propertyDefinitionLabel "politico cargo_uf";
+	d2rq:column "politico.cargo_uf";
+	.
+map:politico_partido a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_partido;
+	d2rq:propertyDefinitionLabel "politico partido";
+	d2rq:column "politico.partido";
+	.
+map:politico_situacao a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_situacao;
+	d2rq:propertyDefinitionLabel "politico situacao";
+	d2rq:column "politico.situacao";
+	.
+map:politico_atuacao a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_atuacao;
+	d2rq:propertyDefinitionLabel "politico atuacao";
+	d2rq:column "politico.atuacao";
+	.
+map:politico_chaveTSE a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_chaveTSE;
+	d2rq:propertyDefinitionLabel "politico chaveTSE";
+	d2rq:column "politico.chaveTSE";
+	.
+map:politico_chaveFichaLimpa a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_chaveFichaLimpa;
+	d2rq:propertyDefinitionLabel "politico chaveFichaLimpa";
+	d2rq:column "politico.chaveFichaLimpa";
+	.
+map:politico_pagina_senado a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:politico;
+	d2rq:property vocab:politico_pagina_senado;
+	d2rq:propertyDefinitionLabel "politico pagina_senado";
+	d2rq:column "politico.pagina_senado";
+	.
+
