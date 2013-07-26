@@ -1,0 +1,9 @@
+db.host= "endereço_servidor"
+db.user= "usuario_do_banco_de_dados"
+db.pass= "senha_banco_de_dados"
+db.pltc= "nome_banco_de_dados"
+
+
+
+///O nome do arquivo deve ser alterado para "application.properties" com seus dados de conexão apenas,
+caso contrario, a conexão não vai ser realizada. /// 
