@@ -145,30 +145,40 @@ $sql2 = mysql_query("SELECT descricao,tipo,valor FROM declaracao_bens WHERE id_p
 $cont2 = mysql_num_rows($sql2);
 
 if ($cont2 > 0){	
-	$sql2a = mysql_query("SELECT SUM(valor) AS soma FROM declaracao_bens WHERE id_politico = '$recurso'");
-	while($row2a = mysql_fetch_array($sql2a))
-		$soma = $row2a['soma'];			
-	$conta_declaracao = 1;
-	echo "<polbr:declarationOfAssets rdf:parseType='Resource'>";
-   	echo	"<polbr:DeclarationOfAssets>";
 
-	while($row = mysql_fetch_array($sql2)){
+	$sql2b = mysql_query("SELECT ano FROM declaracao_bens WHERE id_politico = '$id_politico'");
+
+	while($row1 = mysql_fetch_array($sql2b)){	
+	
+		$ano = $row1['ano'] ;
+		$sql2a = mysql_query("SELECT SUM(valor) AS soma FROM declaracao_bens WHERE id_politico = '$recurso' and ano = '$ano'");
+		while($row2a = mysql_fetch_array($sql2a))
+			$soma = $row2a['soma'];			
+		$conta_declaracao = 1;
+
+
+		echo "<polbr:declarationOfAssets rdf:parseType='Resource'>";
+		echo "<timeline:atYear>"$ano"</timeline:atYear>";   	
+		echo "<polbr:DeclarationOfAssets>";
+
+		$sql2c = mysql_query("SELECT descricao,tipo,valor FROM declaracao_bens WHERE id_politico = '$id_politico' and ano = '$ano' ");
+
+		while($row = mysql_fetch_array($sql2c)){
 		
-		echo 	"<timeline:atYear>".$row['ano']."</timeline:atYear>";
+			echo "
 
-		echo "
-
-		<being:owns>
-			<biblio:number>$conta_declaracao</biblio:number>
-			<dcterms:description>".$row['descricao']."</dcterms:description>
-			<dcterms:type>".$row['tipo']."</dcterms:type>
-			<rdfmoney:Price>".$row['valor']."</rdfmoney:Price>
-		</being:owns>";
-		$conta_declaracao++;
+			<being:owns>
+				<biblio:number>$conta_declaracao</biblio:number>
+				<dcterms:description>".$row['descricao']."</dcterms:description>
+				<dcterms:type>".$row['tipo']."</dcterms:type>
+				<rdfmoney:Price>".$row['valor']."</rdfmoney:Price>
+			</being:owns>";
+			$conta_declaracao++;
+		}
+		echo "<spinrdf:Sum>$soma</spinrdf:Sum>";
+		echo "</polbr:DeclarationOfAssets>";
+		echo "</polbr:declarationOfAssets>";
 	}
-	echo "<spinrdf:Sum>$soma</spinrdf:Sum>";
-	echo "</polbr:DeclarationOfAssets>";
-	echo "</polbr:declarationOfAssets>";
 }
 
 $sql3 = mysql_query("SELECT * FROM eleicao WHERE id_politico = '$id_politico'");
