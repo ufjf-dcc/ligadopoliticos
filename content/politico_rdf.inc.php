@@ -150,7 +150,6 @@ if ($cont2 > 0){
 		$soma = $row2a['soma'];			
 	$conta_declaracao = 1;
 	echo "<polbr:declarationOfAssets rdf:parseType='Resource'>";
-	echo 	"<timeline:atYear>2010</timeline:atYear>";
    	echo	"<polbr:DeclarationOfAssets>";
 
 	while($row = mysql_fetch_array($sql2)){
