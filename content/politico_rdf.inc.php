@@ -149,10 +149,17 @@ if ($cont2 > 0){
 	while($row2a = mysql_fetch_array($sql2a))
 		$soma = $row2a['soma'];			
 	$conta_declaracao = 1;
-	echo "<polbr:declarationOfAssets rdf:parseType='Literal'>";
+	echo "<polbr:declarationOfAssets rdf:parseType='Resource'>";
+	echo 	"<timeline:atYear>2010</timeline:atYear>";
+   	echo	"<polbr:DeclarationOfAssets>";
+
 	while($row = mysql_fetch_array($sql2)){
+		
+		echo 	"<timeline:atYear>".$row['ano']."</timeline:atYear>";
+
 		echo "
-		<being:owns rdf:parseType='Literal'>
+
+		<being:owns>
 			<biblio:number>$conta_declaracao</biblio:number>
 			<dcterms:description>".$row['descricao']."</dcterms:description>
 			<dcterms:type>".$row['tipo']."</dcterms:type>
@@ -161,6 +168,7 @@ if ($cont2 > 0){
 		$conta_declaracao++;
 	}
 	echo "<spinrdf:Sum>$soma</spinrdf:Sum>";
+	echo "</polbr:DeclarationOfAssets>";
 	echo "</polbr:declarationOfAssets>";
 }
 
@@ -169,7 +177,7 @@ $cont3 = mysql_num_rows($sql3);
 
 if ($cont3 > 0){
 	while($row = mysql_fetch_array($sql3)){
-		echo "<polbr:election rdf:parseType='Literal'>";
+		echo "<polbr:election rdf:parseType='Resource'>";
 			echo "<timeline:atYear>".$row['ano']."</timeline:atYear>";
 			echo "<foaf:name>".$row['nome_urna']."</foaf:name>";
 			echo "<biblio:number>".$row['numero_candidato']."</biblio:number>";
@@ -202,7 +210,7 @@ $cont4 = mysql_num_rows($sql4);
 
 if ($cont4 > 0){
 	while($row = mysql_fetch_array($sql4)){	
-		echo "<polbr:absence rdf:parseType='Literal'>";
+		echo "<polbr:absence rdf:parseType='Resource'>";
 			if ($row['cargo'] <> '' AND $row['cargo'] <> NULL)					
 				echo "<pol:Office>".$row['cargo']."</pol:Office>";					
 			if ($row['cargo_uf'] <> '' AND $row['cargo_uf'] <> NULL)				
@@ -225,7 +233,7 @@ $cont5 = mysql_num_rows($sql5);
 if ($cont5 <> ''){				
 	$conta_comissao = 1;
 	while($row = mysql_fetch_array($sql5)){
-		echo "<polbr:committee rdf:parseType='Literal'>";
+		echo "<polbr:committee rdf:parseType='Resource'>";
 			$data_inicio = date('d/m/Y', strtotime($row['data_inicio']));
 			$data_fim = date('d/m/Y', strtotime($row['data_fim']));
 			if ($data_fim == '01/01/1970')
@@ -248,7 +256,7 @@ $sql6 = mysql_query("SELECT * FROM endereco_parlamentar_politico WHERE id_politi
 $cont6 = mysql_num_rows($sql6);
 
 if ($cont6 > 0){				
-	echo "<vcard:adr rdf:parseType='Literal'>";
+	echo "<vcard:adr rdf:parseType='Resource'>";
 	while($row = mysql_fetch_array($sql6)){	
 		if ($row['anexo'] <> '' AND $row['anexo'] <> NULL)					
 			echo "<polbr:annex>".$row['anexo']."</polbr:annex>";					
@@ -286,7 +294,7 @@ $cont8 = mysql_num_rows($sql8);
 if ($cont8 > 0){
 	$conta_lideranca = 1;
 	while($row = mysql_fetch_array($sql8)){
-		echo "<polbr:leadership rdf:parseType='Literal'>";
+		echo "<polbr:leadership rdf:parseType='Resource'>";
 			$data_inicio = date('d/m/Y', strtotime($row['data_inicio']));
 			$data_fim = date('d/m/Y', strtotime($row['data_fim']));
 			if ($data_fim == '01/01/1970')
@@ -310,7 +318,7 @@ $cont9 = mysql_num_rows($sql9);
 if ($cont9 > 0){
 	$conta_mandato = 1;
 	while($row = mysql_fetch_array($sql9)){
-		echo "<pol:Term rdf:parseType='Literal'>";
+		echo "<pol:Term rdf:parseType='Resource'>";
 			$data_inicio = date('d/m/Y', strtotime($row['data_inicio']));
 			$data_fim = date('d/m/Y', strtotime($row['data_fim']));
 			if ($data_fim == '01/01/1970')
@@ -333,7 +341,7 @@ $cont10 = mysql_num_rows($sql10);
 if ($cont10 > 0){
 	$conta_missao = 1;
 	while($row = mysql_fetch_array($sql10)){
-		echo "<polbr:mission rdf:parseType='Literal'>";
+		echo "<polbr:mission rdf:parseType='Resource'>";
 			$data_inicio = date('d/m/Y', strtotime($row['data_inicio']));
 			$data_fim = date('d/m/Y', strtotime($row['data_fim']));
 			if ($data_fim == '01/01/1970')
@@ -358,7 +366,7 @@ $cont11 = mysql_num_rows($sql11);
 if ($cont11 <> ''){
 	$conta_proposicao = 1;
 	while($row = mysql_fetch_array($sql11)){
-		echo "<polbr:proposition rdf:parseType='Literal'>";
+		echo "<polbr:proposition rdf:parseType='Resource'>";
 			$data = date('d/m/Y', strtotime($row['data']));
 			if ($data == '01/01/1970')
 				$data = '-';
@@ -383,7 +391,7 @@ $cont12 = mysql_num_rows($sql12);
 if ($cont12 <> ''){
 	$conta_pronunciamento = 1;
 	while($row = mysql_fetch_array($sql12)){
-		echo "<biblio:Speech rdf:parseType='Literal'>";
+		echo "<biblio:Speech rdf:parseType='Resource'>";
 			$data = date('d/m/Y', strtotime($row['data']));
 			if ($data == '01/01/1970')
 				$data = '-';
