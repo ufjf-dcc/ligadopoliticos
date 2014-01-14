@@ -1,0 +1,23 @@
+<?php
+require 'scraperwiki/simple_html_dom.php';
+
+$html = scraperWiki::scrape("http://www.desaparecidos.mj.gov.br/frmListaEncontrado.aspx");
+
+$dom = new simple_html_dom();
+$dom->load($html);
+$contador = 1;
+$contador2 = 1;
+foreach ($dom->find("#grdEstabelecimento tbody tr") as $row) {
+    if($contador > 3){
+        $contador2 = 1;
+        foreach($row->find("span") as $nome){
+            if($contador2 % 2 == 0)
+                echo $nome->plaintext.'||';
+            $contador2++;
+        }
+        echo ';;';
+    }
+    $contador++;
+}
+
+?>

@@ -1,0 +1,25 @@
+<?php
+/* Código para raspagem de dados => 
+ */
+require 'scraperwiki/simple_html_dom.php';
+
+$urlBase = 'http://br.missingkids.com/missingkids/servlet/PubCaseSearchServlet?shortLang=pt&subjToSearch=child&lastName=&firstName=&middleName=&fromDate=&toDate=&missYear=&missMonth=&missCity=&missState=All&missCountry=BR&missProvince=&abductedState=All&abductedCountry=All&abductedProvince=&feet_1=&inch_1=&feet_2=&inch_2=&heightUnit=centimeter&centimeter_1=&centimeter_2=&weight_1=&weight_2=&weightUnit=kilogram&age_1=&age_2=&sex=All&hairColor=All&eyeColor=All&caseType=All&search.x=8&search.y=7&j_encoding=UTF8&LanguageCountry=pt_BR&goToPage=1&newLang=false&act=advanceSearch&searchLang=pt_BR&ctyCode=BR';
+
+$d = 'http://br.missingkids.com/missingkids/servlet/PubCaseSearchServlet?shortLang=pt&subjToSearch=child&lastName=&firstName=&middleName=&fromDate=&toDate=&missYear=&missMonth=&missCity=&missState=All&missCountry=BR&missProvince=&abductedState=All&abductedCountry=All&abductedProvince=&feet_1=&inch_1=&feet_2=&inch_2=&heightUnit=centimeter&centimeter_1=&centimeter_2=&weight_1=&weight_2=&weightUnit=kilogram&age_1=&age_2=&sex=All&hairColor=All&eyeColor=All&caseType=All&j_encoding=UTF8&LanguageCountry=pt_BR&goToPage=3&newLang=false&act=advanceSearch&searchLang=pt_BR&ctyCode=BR';
+
+
+$htmlMain = scraperWiki::scrape($urlBase);
+
+$domMain = new simple_html_dom();
+$domMain->load($htmlMain);
+
+//Começa com uma página
+$count = 1;
+foreach ($domMain->find("spacer a") as $page) $count++;
+
+//for($i=1; $i<=$count; $i++){
+    $item1 = $domMain->find('.bluebg td[width="50%"]');
+    print_r($item1[1]);
+//}
+
+?>
