@@ -5,13 +5,22 @@
 		public $DB_USER = "db.user=";
 		public $DB_PASS = "db.pass=";
 		public $DB_PLTC = "db.pltc=";
-
+                public $DB_LOGIN_SPARQL = "db.login_sparql=";
+                public $DB_URL_SPARQL = "db.url_sparql=";
+                
 	}	
 
 	function getProperty($string){
-
-		$dados = fopen("application.properties","r");
-		
+                $parte= "application.properties";
+                while(!file_exists($parte))
+                    $parte = "../" . $parte;
+                
+                
+		$dados = fopen($parte,"r");
+                
+                
+                
+                
 		while (!feof($dados)) {
 
 			$linha = fgets($dados, 4096);
@@ -29,7 +38,7 @@
 			
 		fclose($dados);
 		
-
+          
 		return $db;	
 	}
 

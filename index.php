@@ -4,7 +4,8 @@
 </head>
 <body onLoad="visibilidadeCargo()">
 	<?php
-
+        include_once './properties.php';
+        include './consultasSPARQL.php';
 	include("config.php");
 	include("functions.php");
 
@@ -36,17 +37,17 @@
 
 	<div id='tudo'>
 	  	<div id='topo'>
-		 	<? include("content/topo.inc.php"); ?>	 		
+		 	<?php include("content/topo.inc.php"); ?>	 		
 	  	</div>
 	  	<div id='menu'>
-		 	<? include("content/menu.inc.php"); ?>  
+		 	<?php include("content/menu.inc.php"); ?>  
 		</div>
 	  	<div id='navegacao'>
 	  		<div id='conteudo'>
-	  			<? include($pag); ?>
+	  			<?php include($pag); ?>
 	  		</div>
 	  	</div>
-		<? include("content/base.inc.php"); ?>  
+		<?php include("content/base.inc.php"); ?>  
 	</div>
 </body>
 </HTML>

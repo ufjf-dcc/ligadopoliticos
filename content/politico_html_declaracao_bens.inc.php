@@ -6,11 +6,11 @@
 		<td class='topo_tabela'>N</sup></td>
 		<td class='topo_tabela'>Descrição</td>
 		<td class='topo_tabela'>Tipo</td>	
-		<td class='topo_tabela'>Valor</td>					
+		<td class='topo_tabela'>Valor</td>
 	</tr>";
 	
 	$soma = 0;
-	while($row = mysql_fetch_array($sql2)){
+        foreach ($sparql2 as $row){
 		echo "
 		<tr>
 			<td>$conta_declaracao</td>

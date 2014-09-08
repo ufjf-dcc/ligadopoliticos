@@ -1,22 +1,35 @@
 <?php	
 	echo "<div class='divisao'>Endereço Parlamentar</div>";					
-	while($row = mysql_fetch_array($sql6)){	
-		if ($row['anexo'] <> '' AND $row['anexo'] <> NULL)					
+	foreach ($sparql6 as $row){	
+		if (isset($row['anexo']))					
 			echo "<b>Anexo:</b> ".$row['anexo']."<br />";					
-		if ($row['ala'] <> '' AND $row['ala'] <> NULL)				
+		if (isset($row['ala']))				
 			echo "<b>Ala:</b> ".$row['ala']."<br />";
-		if ($row['gabinete'] <> '' AND $row['gabinete'] <> NULL)		
+		if (isset($row['gabinete']))		
 			echo "<b>Gabinete:</b> ".$row['gabinete']."<br />";
-		if ($row['email'] <> '' AND $row['email'] <> NULL)					
+		if (isset($row['email']))					
 			echo "<b>E-mail:</b> ".$row['email']."<br />";
-		if ($row['telefone'] <> '' AND $row['telefone'] <> NULL)					
+		if (isset($row['telefone']))					
 			echo "<b>Telefone:</b> ".$row['telefone']."<br />";
-		if ($row['fax'] <> '' AND $row['fax'] <> NULL)					
+		if (isset($row['fax']))					
 			echo "<b>Fax:</b> ".$row['fax']."<br />";
-		$sql7 = mysql_query("SELECT * FROM endereco_parlamentar WHERE id_endereco_parlamentar = '$row[id_endereco_parlamentar]'");
-	}		
-	while($row = mysql_fetch_array($sql7)){
-		echo "<b>Local: </b>".$row['tipo']."<br />";
+	}	
+        $sparql7= consultaSPARQL('SELECT ?tipo ?rua ?bairro ?cidade ?estado ?CEP ?CNPJ ?telefone ?disque ?site
+        WHERE	{
+                <http://ligadonospoliticos.com.br/politico/10> vcard:adr ?x .
+                ?x po:Place ?tipo .
+                ?x vcard:street-address ?rua .
+                ?x polbr:district ?bairro .
+                ?x vcard:locality ?cidade .
+                ?x geospecies:State ?estado .
+                ?x vcard:postal-code ?CEP .
+                ?x polbr:CNPJ ?CNPJ .
+                ?x polbr:cabinetphone ?telefone .
+                ?x polbr:fax ?disque .
+                ?x foaf:homepage ?site .
+          }');
+	foreach($sparql7 as $row){
+                echo "<b>Local: </b>".$row['tipo']."<br />";
 		echo "<b>Rua: </b>".$row['rua']."<br />";
 		echo "<b>Bairro: </b>".$row['bairro']."<br />";
 		echo "<b>Cidade: </b>".$row['cidade']."<br />";

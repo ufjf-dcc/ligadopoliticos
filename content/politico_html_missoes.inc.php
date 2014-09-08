@@ -10,19 +10,14 @@
 		<td>Data Fim</td>
 		<td>Documento</td>							
 	</tr>";
-	while($row = mysql_fetch_array($sql10)){
-		$data_inicio = date('d/m/Y', strtotime($row['data_inicio']));
-		$data_fim = date('d/m/Y', strtotime($row['data_fim']));
-		if ($data_fim == '01/01/1970')
-			$data_fim = '-';
-	
+	foreach ($sparql10 as $row){
 		echo "
 		<tr>
 			<td>$conta_missao</td>
 			<td>".$row['descricao']."</td>
 			<td>".$row['tipo']."</td>
-			<td>".$data_inicio."</td>
-			<td>".$data_fim."</td>
+			<td>".$row['data_inicio']."</td>
+			<td>".$row['data_fim']."</td>
 			<td>".$row['documento']."</td>
 		</tr>";
 		$conta_missao++;

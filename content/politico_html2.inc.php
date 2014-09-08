@@ -26,8 +26,10 @@
 		<div id="navegacao">
 			<div id="conteudo">
 				<?php
+                                include("../../../properties.php");
 				include("../../../config.php");
-				
+				include("../../../consultasSPARQL");
+                                
 				$endereco = $_SERVER ['REQUEST_URI'];
 				$parte_endereco = explode('/',$endereco);
 				$recurso = $parte_endereco[2];
@@ -120,7 +122,7 @@
 				$cont6 = mysql_num_rows($sql6);
 				
 				if ($cont6 > 0){				
-					echo "<div class='divisao'>Endereço Parlamentar</div>";
+                                            echo "<div class='divisao'>Endereço Parlamentar</div>";
 					while($row = mysql_fetch_array($sql6)){	
 						if ($row['anexo'] <> '' AND $row['anexo'] <> NULL)					
 							echo "<b>Anexo:</b> ".$row['anexo']."<br />";					
@@ -174,13 +176,28 @@
 					}
 				}
 				
-				$sql2 = mysql_query("SELECT descricao,tipo,valor FROM declaracao_bens WHERE id_politico = '$recurso'");
-				$cont2 = mysql_num_rows($sql2);
-				
+				//$sql2 = mysql_query("SELECT descricao,tipo,valor FROM declaracao_bens WHERE id_politico = '$recurso'");
+				//$cont2 = mysql_num_rows($sql2);
+				$sql2 = consultaSPARQL('select ?tipo ?descricao ?valor 
+                                where{
+                                  <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:declarationOfAssets ?x.
+                                  ?x polbr:DeclarationOfAssets ?y.
+                                  ?y dcterms:description ?descricao.
+                                  ?y dcterms:type ?tipo.
+                                  ?y rdfmoney:Price ?valor
+                                  }');
+                                $cont_declaracao_bens = count($sql2);
 				if ($cont2 > 0){		
-					$sql2a = mysql_query("SELECT SUM(valor) AS soma FROM declaracao_bens WHERE id_politico = '$recurso'");
-					while($row2a = mysql_fetch_array($sql2a))
-						$soma = $row2a['soma'];		
+					$sql2a = consultaSPARQL("select  (SUM(?v) as ?soma)
+                                                where{
+                                                  <http://ligadonospoliticos.com.br/politico/".$recurso."> polbr:declarationOfAssets ?x.
+                                                  ?x polbr:DeclarationOfAssets ?y.
+                                                  ?y rdfmoney:Price ?valor
+                                                  BIND (xsd:decimal(?valor) as ?v) 
+                                                  }");
+					//while($row2a = mysql_fetch_array($sql2a))
+					foreach ($sql2a as $row2a)	
+                                        $soma = $row2a['soma'];		
 					echo "<div class='divisao'>Declarações de Bens</div>";
 					$conta_declaracao = 1;
 					echo "<table border=1 class='tabelas'>
@@ -190,8 +207,8 @@
 						<td class='topo_tabela'>Tipo</td>	
 						<td class='topo_tabela'>Valor</td>					
 					</tr>";
-					
-					while($row = mysql_fetch_array($sql2)){
+					foreach ($sql2 as $row){
+					//while($row = mysql_fetch_array($sql2)){
 						echo "
 						<tr>
 							<td>$conta_declaracao</td>
