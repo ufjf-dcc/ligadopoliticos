@@ -9,18 +9,13 @@
 		<td>Data Fim</td>					
 	</tr>";
 	
-	while($row = mysql_fetch_array($sql9)){
-		$data_inicio = date('d/m/Y', strtotime($row['data_inicio']));
-		$data_fim = date('d/m/Y', strtotime($row['data_fim']));
-		if ($data_fim == '01/01/1970')
-			$data_fim = '-';
-	
+	foreach ($sparql9 as $row){	
 		echo "
 		<tr>
 			<td>$conta_mandato</td>
 			<td>".$row['cargo']."</td>
-			<td>".$data_inicio."</td>
-			<td>".$data_fim."</td>
+			<td>".$row['data_inicio']."</td>
+			<td>".$row['data_fim']."</td>
 		</tr>";
 		$conta_mandato++;
 	}

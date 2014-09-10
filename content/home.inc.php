@@ -12,9 +12,12 @@ escreve(
 ?>
 <br />
 <br />
-<?php
-$sql1= mysql_query("SELECT COUNT(id_politico) AS quantidade FROM politico");
-while ($row = mysql_fetch_array($sql1)) $quantidade = $row['quantidade'];  
+<?php 
+$r = consultaSPARQL('SELECT (count(?s) as ?quantidade) 
+WHERE	{ 
+  	?s dc:creator ?x 
+  }');
+foreach ($r as $row) $quantidade = $row['quantidade'];
 {
   echo "<div style='text-align:center;'><div style='background-color:#D7DCE9; width: 230px;margin: 0 auto;'>";
   escreve("Políticos Cadastrados: ","Registered Politicians: ");

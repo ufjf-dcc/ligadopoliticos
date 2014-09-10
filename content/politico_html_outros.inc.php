@@ -1,15 +1,21 @@
 <?php					
-	echo "<div class='divisao'>Outros Dados</div>";	
-
+        include '../properties.php';
+        $dados = new Constant;
+	$host = getProperty($dados->DB_HOST);
+	$user = getProperty($dados->DB_USER);
+	$pass = getProperty($dados->DB_PASS);
+	$pltc = getProperty($dados->DB_PLTC);
+        echo "<div class='divisao'>Outros Dados</div>";
 	$config = array(
-	  'db_host' => 'mysql02.redehost.com.br',//'localhost', 
-	  'db_name' => 'politicos_brasileiros',
-	  'db_user' => 'lucas.ufjf',//'root',
-	  'db_pwd' => '99l9m2g1',
+	  'db_host' => $host,//'localhost', 
+	  'db_name' => $pltc,
+	  'db_user' => $user,//'root',
+	  'db_pwd' => $pass,
 	  'store_name' => 'arc_tests',
 	  'max_errors' => 100,
+            
 	);
-	
+        
 	$store = ARC2::getStore($config);
 	if (!$store->isSetUp()) {
 	  $store->setUp();
@@ -37,7 +43,5 @@
 	  }
 	}
 	echo "</ul>";
-
 ?>
-
 

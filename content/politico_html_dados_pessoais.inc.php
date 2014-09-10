@@ -1,58 +1,95 @@
 <?php
+        include '../config.php';
+        include '../consultasSPARQL.php';
+    //    $recurso = $_SERVER ['REQUEST_URI'];
+	mysql_select_db("politicos_brasileiros", $conexao);
+	mysql_set_charset("utf8");
 	$nome_parlamentar = '';
+        $endereco_rdf  =  str_replace('html', 'rdf', $endereco);
 	$sql1 = mysql_query("SELECT * FROM politico WHERE id_politico = '$recurso'");
-	while($row = mysql_fetch_array($sql1)){
-		$nome_civil = $row['nome_civil'];
-		$nome_parlamentar = $row['nome_parlamentar'];
-		$foto = $row['foto'];	
+        $sparql1 = consultaSPARQL('
+            select  ?nome_civil ?nome_parlamentar ?nome_pai ?nome_mae ?foto ?sexo ?cor ?data_nascimento ?estado_civil ?ocupacao ?grau_instrucao ?nacionalidade
+            ?cidade_nascimento ?estado_nascimento ?cidade_eleitoral ?estado_eleitoral ?site ?email ?cargo ?cargo_uf ?partido ?situacao
+            where {
+              <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:name ?nome_civil .
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:governmentalName ?nome_parlamentar }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> bio:father ?nome_pai }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> bio:father ?nome_mae }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:img ?foto }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:gender ?sexo }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> person:complexion ?cor }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:birthday ?data_nascimento }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:maritalStatus ?estado_civil }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> person:occupation ?ocupacao }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> dcterms:educationLevel ?grau_instrucao }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> dbpprop:nationality ?nacionalidade }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> being:place-of-birth ?cidade_nascimento }. 
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:state-of-birth ?estado_nascimento }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:place-of-vote ?cidade_eleitoral }.  
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:place-of-vote ?estado_eleitoral }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:homepage ?site }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> biblio:Email ?email }. 
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> pol:Office ?cargo }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:officeState ?cargo_uf }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> pol:party ?partido }.
+              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:situation ?situacao }.        
+              FILTER isliteral(?cidade_nascimento).
+              FILTER isliteral(?partido)
+                      }');
+        foreach ($sparql1 as $row){
+                $nome_civil = $row['nome_civil'];
+		//$foto = $row['foto'];	
 		
-		echo "<h2>".$nome_civil."&nbsp;&nbsp;<a href='http://ligadonospoliticos.com.br/politico/$recurso/rdf' style='decoration:none;'><img src='../../../images/rdf_icon.gif' border=0 height='18px' /></a><iframe src='http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fligadonospoliticos.com.br%2Fpolitico%2F".$recurso."%2Fhtml%2F&action=like' scrolling='no' frameborder='0' style='height: 62px; width: 100%' allowTransparency='true'></iframe></h2>";
+              echo $row['foto'];
+               
+		echo "<h2>".$nome_civil."&nbsp;&nbsp;<a href='$endereco_rdf' style='decoration:none;'><img src='../../../images/rdf_icon.gif' border=0 height='18px' /></a><iframe src='http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fligadonospoliticos.com.br%2Fpolitico%2F".$recurso."%2Fhtml%2F&action=like' scrolling='no' frameborder='0' style='height: 62px; width: 100%' allowTransparency='true'></iframe></h2>";
 		
-		if ($row['foto'] <> '' || $row['foto'] <> NULL)	
-			echo "<div id='foto' style='float:right;'> <img src=../../../images/politicos/".$foto." /></div>";
+		if(isset($row['foto']) )
+		//http://ligadonospoliticos.com.br/images/politicos/1.jpeg	
+                    echo "<div id='foto' style='float:right;'> <img src=../../../images/politicos/".$row['foto']."/></div>";
 		echo "<div id='dados_atuais' style='float:left;'>"; 
 
-		if ($nome_parlamentar  <> '' AND $nome_parlamentar  <> NULL)					
-			echo "<b>Nome Parlamentar:</b> ".$nome_parlamentar."<br />";					
-		if ($row['situacao'] <> '' AND $row['situacao'] <> NULL)	
+		if(isset($row['nome_parlamentar']) )					
+			echo "<b>Nome Parlamentar:</b> ".$row['nome_parlamentar']."<br />";					
+		if(isset($row['situacao']) )	
 			echo "<b>Situação:</b> <a href='../../../?pag=resultadobusca&situacao=".$row['situacao']."'>".$row['situacao']."</a><br />";
-		if ($row['cargo'] <> '' AND $row['cargo'] <> NULL)	
+		if(isset($row['cargo']) )	
 			echo "<b>Cargo:</b> <a href='../../../?pag=resultadobusca&cargo=".$row['cargo']."'>".$row['cargo']."</a><br />";
-		if ($row['cargo_uf'] <> '' AND $row['cargo_uf'] <> NULL)
+		if(isset($row['cargo_uf']) )
 			echo "<b>Estado:</b> <a href='../../../?pag=resultadobusca&estado=".$row['cargo_uf']."'>".$row['cargo_uf']."</a><br />";
-		if ($row['partido'] <> '' AND $row['partido'] <> NULL)
+		if(isset($row['partido']) )
 			echo "<b>Partido:</b> <a href='../../../?pag=resultadobusca&partido=".$row['partido']."'>".$row['partido']."</a><br />";			
-		if ($row['data_nascimento'] <> '' AND $row['data_nascimento'] <> NULL){		
-			$data_nascimento = date('d/m/Y', strtotime($row['data_nascimento']));
-			echo "<b>Data de Nascimento:</b> ".$data_nascimento."<br />";
+		if(isset($row['data_nascimento']) ){		
+			//$data_nascimento = date('d/m/Y', strtotime($row['data_nascimento']));
+			echo "<b>Data de Nascimento:</b> ".$row['data_nascimento']."<br />";
 		}
-		if ($row['nome_pai'] <> '' AND $row['nome_pai'] <> NULL)	
+		if(isset($row['nome_pai']) )	
 			echo "<b>Nome do Pai:</b> ".$row['nome_pai']."<br />";
-		if ($row['nome_mae'] <> '' AND $row['nome_mae'] <> NULL)	
+		if(isset($row['nome_mae']) )	
 			echo "<b>Nome da Mãe:</b> ".$row['nome_mae']."<br />";
-		if ($row['sexo'] <> '' AND $row['sexo'] <> NULL)		
+		if(isset($row['sexo']) )		
 			echo "<b>Sexo:</b> <a href='../../../?pag=resultadobusca&sexo=".$row['sexo']."'>".$row['sexo']."</a><br />";
-		if ($row['cor'] <> '' AND $row['cor'] <> NULL)	
+		if(isset($row['cor']) )	
 			echo "<b>Cor:</b> <a href='../../../?pag=resultadobusca&cor=".$row['cor']."'>".$row['cor']."</a><br />";
-		if ($row['estado_civil'] <> '' AND $row['estado_civil'] <> NULL)	
+		if(isset($row['estado_civil']) )	
 			echo "<b>Estado Civil:</b> <a href='../../../?pag=resultadobusca&estado_civil=".$row['estado_civil']."'>".$row['estado_civil']."</a><br />";
-		if ($row['ocupacao'] <> '' AND $row['ocupacao'] <> NULL)	
+		if(isset($row['ocupacao']) )	
 			echo "<b>Ocupação:</b> <a href='../../../?pag=resultadobusca&ocupacao=".$row['ocupacao']."'>".$row['ocupacao']."</a><br />";
-		if ($row['grau_instrucao'] <> '' AND $row['grau_instrucao'] <> NULL)	
+		if(isset($row['grau_instrucao']) )	
 			echo "<b>Grau de Instrução:</b> <a href='../../../?pag=resultadobusca&grau_instrucao=".$row['grau_instrucao']."'>".$row['grau_instrucao']."</a><br />";
-		if ($row['nacionalidade'] <> '' AND $row['nacionalidade'] <> NULL)	
+		if(isset($row['nacionalidade']) )	
 			echo "<b>Nacionalidade:</b> <a href='../../../?pag=resultadobusca&nacionalidade=".$row['nacionalidade']."'>".$row['nacionalidade']."</a><br />";
-		if ($row['cidade_nascimento'] <> '' AND $row['cidade_nascimento'] <> NULL)	
+		if(isset($row['cidade_nascimento']) )	
 			echo "<b>Cidade de Nascimento:</b> <a href='../../../?pag=resultadobusca&cidade_nascimento=".$row['cidade_nascimento']."'>".$row['cidade_nascimento']."</a><br />";
-		if ($row['estado_nascimento'] <> '' AND $row['estado_nascimento'] <> NULL)	
+		if(isset($row['estado_nascimento']) )	
 			echo "<b>Estado de Nascimento:</b> <a href='../../../?pag=resultadobusca&estado_nascimento=".$row['estado_nascimento']."'>".$row['estado_nascimento']."</a><br />";
-		if ($row['cidade_eleitoral'] <> '' AND $row['cidade_eleitoral'] <> NULL)	
+		if(isset($row['cidade_eleitoral']) )	
 			echo "<b>Cidade Eleitoral:</b> <a href='../../../?pag=resultadobusca&cidade_eleitoral=".$row['cidade_eleitoral']."'>".$row['cidade_eleitoral']."</a><br />";
-		if ($row['estado_eleitoral'] <> '' AND $row['estado_eleitoral'] <> NULL)	
+		if(isset($row['estado_eleitoral']) )	
 			echo "<b>Estado-Eleitoral:</b> <a href='../../../?pag=resultadobusca&estado_eleitoral=".$row['estado_eleitoral']."'>".$row['estado_eleitoral']."</a><br />";
-		if ($row['email'] <> '' AND $row['email'] <> NULL)	
+		if(isset($row['email']) )	
 			echo "<b>E-mail:</b> ".$row['email']."<br />";
-		if ($row['site'] <> '' AND $row['site'] <> NULL)
+		if(isset($row['site']) )
 			echo "<b>Site:</b> <a href='".$row['site']."'>".$row['site']."</a><br />"; 
 		
 		
