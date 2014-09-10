@@ -1,9 +1,9 @@
 <HTML>
 <head>
-	<title>LIGADO nos POL�TICOS</title>
-	<meta name="author" content="Lucas de Ramos Ara�jo">
+	<title>LIGADO nos POL�TICOS</title>
+	<meta name="author" content="Lucas de Ramos Ara�jo">
 	<meta name="description" content="">
-	<meta name="keywords" content="pol�ticos brasileiros dados governamentais abertos governo eletronico transparencia dados ligados web semantica">
+	<meta name="keywords" content="pol�ticos brasileiros dados governamentais abertos governo eletronico transparencia dados ligados web semantica">
 	<meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 	<link rel="stylesheet" href="http://ligadonospoliticos.com.br/estilo.css" type="text/css" />
 	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://ligadonospoliticos.com.br/content/foaf.rdf" /> 
@@ -11,7 +11,9 @@
 </head>
 <body>
 	<?php 
-		include("../../../config.php");
+                include("../../../properties.php");
+                include("../../../consultasSPARQL.php");
+                include("../../../config.php");
 		include("../../../functions.php");
 		include("../../../content/idioma.inc.php");
 	?>
@@ -26,12 +28,15 @@
 		<div id="navegacao">
 			<div id="conteudo">
 				<?php
+                                
 				include_once("../../../sparql/ARC2.php");
 				
 				$endereco = $_SERVER ['REQUEST_URI'];
 				$parte_endereco = explode('/',$endereco);
-				$recurso = $parte_endereco[2];
-				
+                                //tamanho fica igual a 6 pois possui uma barra no final e pega um espaço em branco depois da barra
+                                $tamanho = count($parte_endereco);
+				$recurso = $parte_endereco[$tamanho-3];
+                                
 				include("politico_html_dados_pessoais.inc.php");
 
 				$url_facebook = $_SERVER['SERVER_NAME'].$_SERVER ['REQUEST_URI'];
@@ -48,59 +53,140 @@
 				echo "<div class = aba_linha> &nbsp;" ;
 
 				aba_politico_html('No Facebook');
-	
-				$sql2 = mysql_query("SELECT descricao,tipo,valor FROM declaracao_bens WHERE id_politico = '$recurso'");
-				$cont_declaracao_bens = mysql_num_rows($sql2);
-				if ($cont_declaracao_bens > 0){	
+                                
+				$sparql2 = consultaSPARQL(' select ?tipo ?descricao ?valor 
+                                where{
+                                  <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:declarationOfAssets ?x.
+                                  ?x polbr:DeclarationOfAssets ?y.
+                                  ?y dcterms:description ?descricao.
+                                  ?y dcterms:type ?tipo.
+                                  ?y rdfmoney:Price ?valor
+                                  }');
+                                $cont_declaracao_bens = count($sparql2); 
+                                if ($cont_declaracao_bens > 0){	
 					aba_politico_html('Declaração de Bens');	
 				}
 				
-				$sql6 = mysql_query("SELECT * FROM endereco_parlamentar_politico WHERE id_politico = '$recurso'");
-				$cont_endereco_parlamentar = mysql_num_rows($sql6);
+				$sparql6 = consultaSPARQL(' SELECT ?anexo ?ala ?gabinete ?email ?telefone ?fax
+                                WHERE	{
+                                        <http://ligadonospoliticos.com.br/politico/'.$recurso.'> vcard:adr ?x
+                                        OPTIONAL{?x polbr:annex ?anexo }.
+                                        OPTIONAL{?x polbr:wing ?ala}.
+                                        OPTIONAL{?x polbr:cabinet ?gabinete}.
+                                        OPTIONAL{?x biblio:Email ?email}.
+                                        OPTIONAL{?x foaf:phone ?telefone}.
+                                        OPTIONAL{?x vcard:fax ?fax}
+                                        }
+                                        ');
+                                $cont_endereco_parlamentar = count($sparql6); 
 				if ($cont_endereco_parlamentar > 0){	
 					aba_politico_html('Endereço Parlamentar');
 				}
-	
-				$sql3 = mysql_query("SELECT * FROM eleicao WHERE id_politico = '$recurso'");
-				$cont_eleicoes = mysql_num_rows($sql3);
+                                
+                                $sparql3 = consultaSPARQL('SELECT ?ano ?nome_urna ?numero_candidato ?situacao_candidatura ?partido ?nome_coligacao ?partidos_coligacao ?cargo ?cargo_uf ?resultado
+                                    ?numero_protocolo ?numero_processo ?cnpj_campanha
+                                    WHERE	{
+                                      <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:election ?x.
+                                                ?x timeline:atYear ?ano .
+                                                ?x foaf:name ?nome_urna . 
+                                                ?x biblio:number ?numero_candidato .
+                                                ?x pol:party ?partido .
+                                                ?x pol:Office ?cargo .
+                                                 OPTIONAL{ ?x  geospecies:State ?cargo_uf }.
+                                                 OPTIONAL{ ?x earl:outcome ?resultado }.
+                                                 OPTIONAL{ ?x spinrdf:Union ?nome_coligacao }.
+                                                 OPTIONAL{ ?x polbr:unionParties ?partidos_coligacao }.  
+                                                ?x polbr:situation ?situacao_candidatura .
+                                                ?x polbr:protocolNumber ?numero_protocolo .
+                                                ?x polbr:processNumber ?numero_processo .
+                                                ?x polbr:CNPJ ?cnpj_campanha .
+                                                 FILTER isliteral(?partido)
+                                         }');
+                                $cont_eleicoes = count($sparql3);
 				if ($cont_eleicoes > 0){
 					aba_politico_html('Eleições');
 					aba_politico_html('Eleições - Votações');
 				}
 				
-				$sql4 = mysql_query("SELECT * FROM afastamento WHERE id_politico = '$recurso'");
-				$cont4 = mysql_num_rows($sql4);
+                                $sparql4 = consultaSPARQL('SELECT ?cargo ?cargo_uf ?data ?tipo ?motivo
+                                    WHERE	{
+                                      <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:absence ?x.
+                                            OPTIONAL{ ?x pol:Office ?cargo }.
+                                            OPTIONAL{ ?x geospecies:State ?cargo_uf }.
+                                            OPTIONAL{ ?x timeline:atDate ?data }.
+                                            OPTIONAL{ ?x dcterms:type ?tipo }.
+                                            OPTIONAL{ ?x event:fact ?motivo }.
+                                    }');
+                                $cont4 = count($sparql4);
 				if ($cont4 > 0){
 					aba_politico_html('Afastamentos');
 				}
 
-				$sql5 = mysql_query("SELECT c.descricao, c.data_inicio, c.data_fim, cp.participacao FROM comissao c JOIN comissao_politico cp ON c.id_comissao = cp.id_comissao WHERE cp.id_politico = '$recurso'");
-				$cont5 = mysql_num_rows($sql5);
-				if ($cont5 <> ''){
+				$sparql5 = consultaSPARQL('SELECT ?descricao ?data_inicio ?data_fim ?participacao 
+                                WHERE{
+                                  <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:committee ?x.
+                                  ?x dcterms:description ?descricao.
+                                  ?x timeline:beginsAtDateTime ?data_inicio .
+                                  ?x vcard:role ?participacao.
+                                  OPTIONAL{ ?x timeline:endsAtDateTime ?data_fim }.
+                                   }');
+                                $cont5 = count($sparql5);
+                                if ($cont5 <> ''){
 					aba_politico_html('Comissões');	
 				}
 
-				$sql8 = mysql_query("SELECT descricao, tipo, data_inicio, data_fim FROM lideranca WHERE id_politico = '$recurso'");
-				$cont8 = mysql_num_rows($sql8);
-				if ($cont8 > 0){
+				$sparql8 = consultaSPARQL('select ?descricao ?data_inicio ?data_fim ?tipo
+                                where
+                                {	<http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:leadership ?z.
+                                        ?z dcterms:description ?descricao.
+                                        ?z dcterms:type ?tipo.
+                                        ?z timeline:beginsAtDateTime ?data_inicio.
+                                        ?z timeline:endsAtDateTime ?data_fim.
+                                }');
+                                $cont8 = count($sparql8);
+                                if ($cont8 > 0){
 					aba_politico_html('Lideranças');				
 				}
 				
-				$sql9 = mysql_query("SELECT * FROM mandato WHERE id_politico = '$recurso'");
-				$cont9 = mysql_num_rows($sql9);
-				if ($cont9 > 0){
+				$sparql9 = consultaSPARQL('Select ?cargo ?data_inicio ?data_fim
+                                Where{
+                                  <http://ligadonospoliticos.com.br/politico/'.$recurso.'> pol:Term ?x.
+                                  ?x pol:Office ?cargo.
+                                  ?x timeline:beginsAtDateTime 	?data_inicio.
+                                  Optional {?x timeline:endsAtDateTime ?data_fim}.
+                                  }');
+                                $cont9 = count($sparql9);
+                                if ($cont9 > 0){
 					aba_politico_html('Mandatos');
 				}
 
-				$sql10 = mysql_query("SELECT * FROM missao WHERE id_politico = '$recurso'");
-				$cont10 = mysql_num_rows($sql10);
-				if ($cont10 > 0){
+				$sparql10 = consultaSPARQL('Select ?descricao ?data_inicio ?data_fim ?tipo ?documento
+                                Where{
+                                  <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:mission ?x.
+                                  ?x dcterms:description ?descricao.
+                                  ?x dcterms:type 	?tipo.
+                                  ?x timeline:beginsAtDateTime ?data_inicio.
+                                  ?x foaf:Document ?documento.
+                                  OPTIONAL{ ?x timeline:endsAtDateTime ?data_fim }.
+                                  }');
+                                $cont10 = count($sparql10);
+                                if ($cont10 > 0){
 					aba_politico_html('Missões');
 				}
 
-				$sql11 = mysql_query("SELECT * FROM proposicao WHERE id_politico = '$recurso'");
-				$cont11 = mysql_num_rows($sql11);
-				if ($cont11 <> ''){
+				$sparql11 = consultaSPARQL('select ?data ?titulo ?casa ?numero ?tipo ?descricao_tipo ?ementa
+                                where{
+                                   <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:proposition ?y.
+                                  ?y dc:title ?titulo.
+                                  OPTIONAL{ ?y timeline:atDate ?data }.
+                                  ?y po:Place ?casa.
+                                  ?y biblio:Number ?numero.
+                                  ?y dcterms:type ?tipo.
+                                  ?y polbr:description ?descricao_tipo.
+                                  ?y dcterms:description ?ementa.
+                                  }');
+                                $cont11 = count($sparql11);
+                                if ($cont11 <> ''){
 					aba_politico_html('Proposições');
 				}		
 
@@ -109,15 +195,25 @@
 				if ($cont_voto <> ''){
 					aba_politico_html('Votações');
 				}
-				
-				$sql12 = mysql_query("SELECT * FROM pronunciamento WHERE id_politico = '$recurso'");
-				$cont12 = mysql_num_rows($sql12);		
-				if ($cont12 <> ''){
+			
+				$sparql12 = consultaSPARQL('select ?tipo ?data ?casa ?partido ?uf ?resumo
+                                    where{
+                                      <http://ligadonospoliticos.com.br/politico/'.$recurso.'> biblio:Speech ?y.
+                                      ?y dcterms:type ?tipo.
+                                      OPTIONAL{?y timeline:atDate ?data }.
+                                      ?y po:Place ?casa .
+                                      ?y pol:party ?partido .
+                                      ?y geospecies:State ?uf .
+                                      ?y biblio:abstract ?resumo .
+                                      FILTER isliteral(?partido)
+                                      }');
+                                $cont12 = count($sparql12);
+                                if ($cont12 <> ''){
 					aba_politico_html('Pronunciamentos');
 				}
 
 				$sql_outros = mysql_query("SELECT * FROM linkrdf_page WHERE id_politico = '$recurso' AND tipo='sameas' AND uri LIKE '%dbpedia%'");
-				$cont_outros = mysql_numrows($sql_outros);
+				$cont_outros = mysql_num_rows($sql_outros);
 
 				aba_politico_html('No Twitter');
 
@@ -153,7 +249,14 @@
 				}
 				
 				echo "<div style='clear:both;'> &nbsp; </div>";
-					
+				//
+                                //
+                                //
+                                //isso
+                                //
+                                //
+                                //
+                                
 				echo "<a href='http://ligadonospoliticos.com.br/politico/$recurso/rdf' style='decoration:none;'><img src='../../../images/rdf_icon.gif' border=0 height='18px' /></a>";				
 				
 				function aba_politico_html($valor)

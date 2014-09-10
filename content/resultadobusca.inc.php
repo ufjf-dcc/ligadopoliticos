@@ -150,7 +150,6 @@ if ($estado_eleitoral <> ''){
 
 $consulta=$consulta." ORDER BY nome_civil";
 $sql = mysql_query($consulta);
-
 $cont = mysql_num_rows($sql);
 
 echo "<b>".$cont."</b>";

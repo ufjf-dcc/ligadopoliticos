@@ -1,11 +1,11 @@
 <?php
-	$sql_eleicao_voto_cargo = mysql_query("SELECT cargo, cargo_uf FROM eleicao WHERE id_politico = '$recurso'");
-	while($row_eleicao_voto_cargo = mysql_fetch_array($sql_eleicao_voto_cargo)){
-		$eleicao_cargo = $row_eleicao_voto_cargo[0];
-		$eleicao_cargo_uf = $row_eleicao_voto_cargo[1];
-	}
-	
-	if ($eleicao_cargo_uf == 'BR')
+        foreach ($sparql3 as $row_eleicao_voto_cargo){
+            $eleicao_cargo = $row_eleicao_voto_cargo['cargo'];
+            if(isset( $row_eleicao_voto_cargo['cargo_uf'] ) )
+            $eleicao_cargo_uf = $row_eleicao_voto_cargo['cargo_uf'];
+        }
+         
+	if (! isset($eleicao_cargo_uf) )
 		$eleicao_cargo_uf = 'AC';
 
 	if ($eleicao_cargo == 'Presidente')
