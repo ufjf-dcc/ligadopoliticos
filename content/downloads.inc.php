@@ -1,19 +1,28 @@
 <h2>Downloads</h2>
 
 <?php
-
+include '../consultasSPARQL.php';
 $fp = fopen("./downloads/afastamento.csv", "w");
 
 $quebra = chr(13).chr(10);
 $escrita = "id_afastamento;id_politico;cargo;cargo_uf;data;tipo;motivo;".$quebra;
 
-$consulta = "SELECT * FROM afastamento"; 
+//$consulta = "SELECT * FROM afastamento"; 
 
+$sparql = consultaSPARQL('select ?y
+                        where {
+                                ?y polbr:absence ?x.
+                          OPTIONAL {?x pol:Office ?cargo }.
+                          OPTIONAL {?x geospecies:State ?cargo_uf }.
+                          OPTIONAL {?x timeline:atDate ?data}.
+                          OPTIONAL {?x dcterms:type ?type}.
+                          OPTIONAL {?x event:fact ?motivo}.
+                        }');
 $sql = mysql_query($consulta);
 
-
-while($row = mysql_fetch_array($sql)){
-	$escrita = $escrita.$row['id_afastamento'].';'.$row['id_politico'].';'.$row['cargo'].';'.$row['cargo_uf'].';'.$row['data'].';'.$row['tipo'].';'.$row['motivo'].$quebra;	 	 	 	 	 	 	 	
+foreach ($sparql as $row)
+{
+  $escrita = $escrita.$row['cargo'].';'.$row['cargo_uf'].';'.$row['data'].';'.$row['tipo'].';'.$row['motivo'].$quebra;
 }
 
 $escreve = fwrite($fp, $escrita);

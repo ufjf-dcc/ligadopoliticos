@@ -1,6 +1,6 @@
 <?php
 
-$fp = fopen("./politicos_teste.rdf", "w");
+$fp = fopen("./politicos1.rdf", "w");
 $conexao = mysql_connect("localhost","root","123"); 
 if(!$conexao){
     		die('Não foi possível conectar: ' . mysql_error());
@@ -48,7 +48,7 @@ $contador = 0;
 while ($ids_politicos = mysql_fetch_array($id_politicos_validos))
 { 
     //quantidade total de politicos
-   if($ids_politicos['ids'] >=  0 && $ids_politicos['ids'] < 500){
+   //if($ids_politicos['ids'] >=  0 && $ids_politicos['ids'] < 500){
 $id_politico = $ids_politicos['ids'];
 
 fwrite($fp,'<rdf:Description rdf:about="http://ligadonospoliticos.com.br/politico/'.$id_politico.'" >');
@@ -488,10 +488,11 @@ if ($cont13 > 0){
 	}
 }
 fwrite($fp,'</rdf:Description>');
-    }
-    $contador++;
+    
+        }
+  //  $contador++;
 
-      }
+//      }
 fwrite($fp,'</rdf:RDF>');
 fclose($fp);
 ?>
