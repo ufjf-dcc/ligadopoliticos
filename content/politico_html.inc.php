@@ -11,11 +11,11 @@
 </head>
 <body>
 	<?php 
-                include("../../../properties.php");
-                include("../../../consultasSPARQL.php");
-                include("../../../config.php");
-		include("../../../functions.php");
-		include("../../../content/idioma.inc.php");
+                include("properties.php");
+                include("config.php");
+		include("functions.php");
+		include("content/idioma.inc.php");
+                include ("consultasSPARQL.php");
 	?>
 
 <div id="tudo">
@@ -28,24 +28,16 @@
 		<div id="navegacao">
 			<div id="conteudo">
 				<?php
-                                
-				include_once("../../../sparql/ARC2.php");
-				
 				$endereco = $_SERVER ['REQUEST_URI'];
-				$parte_endereco = explode('/',$endereco);
-                                //tamanho fica igual a 6 pois possui uma barra no final e pega um espaço em branco depois da barra
-                                $tamanho = count($parte_endereco);
-				$recurso = $parte_endereco[$tamanho-3];
-                                
+                                $parte_endereco = explode ('/', $endereco);
+                                $recurso = $parte_endereco[3];
 				include("politico_html_dados_pessoais.inc.php");
-
 				$url_facebook = $_SERVER['SERVER_NAME'].$_SERVER ['REQUEST_URI'];
-				echo 
 				'
 				    <meta property="og:title" content="'.$nome_civil.'"/>
 				    <meta property="og:type" content="politician"/>
 				    <meta property="og:url" content="http://'.$url_facebook.'"/>
-				    <meta property="og:image" content="http://ligadonospoliticos.com.br/'.$foto.'"/>
+				    <meta property="og:image" content="http://ligadonospoliticos.com.br/'.$recurso.'"/>
 				';
 
 				echo "<div style='clear:both;'> &nbsp; </div>";
@@ -257,7 +249,7 @@
                                 //
                                 //
                                 
-				echo "<a href='http://ligadonospoliticos.com.br/politico/$recurso/rdf' style='decoration:none;'><img src='../../../images/rdf_icon.gif' border=0 height='18px' /></a>";				
+				echo "<a href='../../../ligadopoliticos/politico/$recurso/rdf' style='decoration:none;'><img src='../../images/rdf_icon.gif' border=0 height='18px' /></a>";				
 				
 				function aba_politico_html($valor)
 				{
@@ -283,7 +275,7 @@
 				?>
 			</div>
 		</div>
-		<? include("../../../content/base.inc.php"); ?>  
+		<?php include("base.inc.php"); ?>  
 	</div>
 </body>
 	

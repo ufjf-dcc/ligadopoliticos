@@ -4,8 +4,8 @@
 </head>
 <body onLoad="visibilidadeCargo()">
 	<?php
-        include_once './properties.php';
-        include './consultasSPARQL.php';
+        include_once ('./properties.php');
+        include ('./consultasSPARQL.php');
 	include("config.php");
 	include("functions.php");
 

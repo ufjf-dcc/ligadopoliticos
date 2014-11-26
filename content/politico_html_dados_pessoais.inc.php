@@ -1,11 +1,9 @@
 <?php
-        include '../config.php';
-        include '../consultasSPARQL.php';
-    //    $recurso = $_SERVER ['REQUEST_URI'];
+        //include ('../config.php');
+        //include ('../consultasSPARQL.php');
 	mysql_select_db("politicos_brasileiros", $conexao);
 	mysql_set_charset("utf8");
 	$nome_parlamentar = '';
-        $endereco_rdf  =  str_replace('html', 'rdf', $endereco);
 	$sql1 = mysql_query("SELECT * FROM politico WHERE id_politico = '$recurso'");
         $sparql1 = consultaSPARQL('
             select  ?nome_civil ?nome_parlamentar ?nome_pai ?nome_mae ?foto ?sexo ?cor ?data_nascimento ?estado_civil ?ocupacao ?grau_instrucao ?nacionalidade
@@ -40,14 +38,15 @@
                 $nome_civil = $row['nome_civil'];
 		//$foto = $row['foto'];	
 		
-              echo $row['foto'];
+                //echo $row['foto'];
                
-		echo "<h2>".$nome_civil."&nbsp;&nbsp;<a href='$endereco_rdf' style='decoration:none;'><img src='../../../images/rdf_icon.gif' border=0 height='18px' /></a><iframe src='http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fligadonospoliticos.com.br%2Fpolitico%2F".$recurso."%2Fhtml%2F&action=like' scrolling='no' frameborder='0' style='height: 62px; width: 100%' allowTransparency='true'></iframe></h2>";
+		echo "<h2>".$nome_civil."&nbsp;&nbsp;<a href='../../../ligadopoliticos/politico/$recurso/rdf' style='decoration:none;'><img src='../../images/rdf_icon.gif' border=0 height='18px' /></a><iframe src='http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fligadonospoliticos.com.br%2Fpolitico%2F".$recurso."%2Fhtml%2F&action=like' scrolling='no' frameborder='0' style='height: 62px; width: 100%' allowTransparency='true'></iframe></h2>";
 		
 		if(isset($row['foto']) )
-		//http://ligadonospoliticos.com.br/images/politicos/1.jpeg	
-                    echo "<div id='foto' style='float:right;'> <img src=../../../images/politicos/".$row['foto']."/></div>";
+		//http://ligadonospoliticos.com.br/images/politicos/1.jpeg  
+                echo "<div id='foto' style='float:right;'> <img src= ../../images/politicos/".$recurso.".jpeg></div>";
 		echo "<div id='dados_atuais' style='float:left;'>"; 
+               
 
 		if(isset($row['nome_parlamentar']) )					
 			echo "<b>Nome Parlamentar:</b> ".$row['nome_parlamentar']."<br />";					
