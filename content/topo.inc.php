@@ -1,7 +1,7 @@
 <?php
 echo "
   			<div id='logo'>
-  				<a href='http://ligadonospoliticos.com.br/?pag=home' border=0 title='Ligado nos Políticos' alt='Ligado nos Políticos'><img border=0 src='http://ligadonospoliticos.com.br/images/logo.png' /></a>
+  				<a href='http://ligadonospoliticos.com.br/?pag=home' border=0 title='Ligado nos Politicos' alt='Ligado nos Politicos'><img border=0 src='http://ligadonospoliticos.com.br/images/logo.png' /></a>
   			</div>
   			<div id='idiomas'>  
 				<a href='".$url."&idioma=pt&pais=BR'><img src='http://ligadonospoliticos.com.br/images/bandeiras/portugues.gif' /></a>

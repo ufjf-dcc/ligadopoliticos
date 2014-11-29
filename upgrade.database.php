@@ -1528,7 +1528,7 @@
 		//usando a função existePoli para descobrir o ID.
 		$id_politico = existePoli($nome_civil, $data_nascimento, $cidade_nascimento);
 
-		$politico = "<http://ligadonospoliticos.com.br/politico/$id_politico>":
+		$politico = "<http://ligadonospoliticos.com.br/politico/$id_politico>";
 		
 		$format = 'application/sparql-results+json';
 		

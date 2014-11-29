@@ -31,8 +31,9 @@
 				include("../../../consultasSPARQL");
                                 
 				$endereco = $_SERVER ['REQUEST_URI'];
-				$parte_endereco = explode('/',$endereco);
-				$recurso = $parte_endereco[2];
+				$parte_endereco = explode('=',$endereco);
+                                $recurso = $parte_endereco[1];
+				//$recurso = $parte_endereco[2];
 				//$recurso = $parte_endereco[3];
 				
 				$sql1 = mysql_query("SELECT * FROM politico WHERE id_politico = '$recurso'");

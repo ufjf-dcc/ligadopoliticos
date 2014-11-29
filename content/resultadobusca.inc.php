@@ -1,4 +1,5 @@
 <?php
+include ('../consultasSPARQL.php');
 escreve ("<h3>Resultado da Busca</h3>", "<h3>Search Result</h3>");
 
 $conta_selecao = 0;
@@ -173,7 +174,7 @@ if ($cont > 0){
 	while($row = mysql_fetch_array($sql)){
 		echo "
 		<tr>
-			<td>&nbsp;<a href='politico/$row[id_politico]' >$row[nome_civil]</a></td>
+			<td>&nbsp;<a href='./politico/$row[id_politico]' >$row[nome_civil]</a></td>
 			<td>&nbsp;"; escreve2($row[situacao]); echo "</td>
 			<td>&nbsp;"; escreve2($row[cargo]); echo "</td>
 			<td>&nbsp;$row[partido]</td>
@@ -187,7 +188,7 @@ else{
 	echo "<br />";
 	include("form_busca.inc.php");
 }
-//echo $consulta;
+
 ?>
 
 </table>
