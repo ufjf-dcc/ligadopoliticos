@@ -2,7 +2,7 @@
 
 	error_reporting(E_ALL);
 	//Login:Senha
-	$login = "????:????" ;
+	$login = "marcos:123" ;
 
 	/* Funções referentes as tabelas do bando de dados.
 	 * Encontra um certo dado e o atualiza ou
@@ -11,22 +11,19 @@
 
 
 	// returna o id do politico se o mesmo existir	
-	function existePoli($nome, $data, $cidade){
-
-		$format = 'application/sparql-results+xml';
-		
-		$endereco = "select ?id {?id foaf:name ?name.
-					 ?id foaf:birthday ?birthday.
-					 ?id being:place-of-birth ?city.
-			    		 FILTER regex(?name, '$nome', \"i\")
-			   		 FILTER regex(?birthday, '$data', \"i\")
-			    		 FILTER regex(?city, '$cidade', \"i\")
-           			}";
+	function existePoli($nome, $data){
+            $aux = '"';
+            $format = 'application/sparql-results+json';
+            $i =$aux."i".$aux;
+            $endereco = "select ?id {?id foaf:name ?name.
+                                    ?id foaf:birthday ?birthday.
+                                    FILTER regex(?name, ".$aux.$nome.$aux.", ".$i.")
+                                    FILTER regex(?birthday, ".$aux.$data.$aux.", ".$i.")
+                            }";
 
 		$url = urlencode($endereco);
-		$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'+limit+1';
+		$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'+limit+1';
 
-		
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
 	    	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
@@ -34,15 +31,81 @@
 	    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
 	    	$resposta = curl_exec( $curl );
 	    	curl_close($curl);
-
-
-		$resposta =  str_replace("http://ligadonospoliticos.com.br/politico/","", $resposta);		
-		
-		if($resposta == null){return 0;}
-		if($resposta != null){return $resposta;}
+		$resposta =  str_replace("http://ligadonospoliticos.com.br/politico/","", $resposta);	//retorna id do politico?!	
+                $respostaJson = json_decode($resposta);
+                $respostaJson = $respostaJson->results;
+                $respostaJson = $respostaJson->bindings[0];
+                $respostaJson = $respostaJson->id;
+                $respostaJson = $respostaJson->value;
+                $respostaJson = (int)$respostaJson;
+		if($respostaJson == null){
+                    return 0;}
+		if($respostaJson != null){return $respostaJson;}
 
 	}
 
+        function prox (){
+            $format = 'application/sparql-results+json';
+			$endereco = "select ?result { ?id skos:subject <http://dbpedia.org/resource/Category:Brazilian_politicians> .
+                                     BIND(xsd:int(substr(str(?id), 43)) AS ?result)
+		   			} ORDER BY desc(?result) limit 1";
+                        //echo $endereco;
+			$url = urlencode($endereco);
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url;
+                        //echo $sparqlURL;
+			$curl = curl_init();
+			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
+		    	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+		    	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+		    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
+		    	$resposta = curl_exec( $curl );
+		    	curl_close($curl);
+                        $respostaJson = json_decode($resposta);
+                        $respostaJson = $respostaJson->results;
+                        $respostaJson = $respostaJson->bindings[0];
+                        $respostaJson = $respostaJson->result;
+                        $respostaJson = $respostaJson->value;
+                        $respostaJson = (int)$respostaJson + 1;
+                        return $respostaJson;
+        }
+        
+        function foto_politico($url, $id){
+            $handle = fopen("/var/www/html/ligadopoliticos/images/politicos/".$id.".jpeg", "x");
+            $destino = '/var/www/html/ligadopoliticos/images/politicos/'.$id.'.jpeg';
+            file_put_contents($destino, file_get_contents($url));
+        }
+
+        function converte_estado($sigla){// ex: convert BA para BAHIA
+            switch ($sigla){
+                case "AC": return "ACRE";
+                case "AL": return "ALAGOAS";
+                case "AP": return "AMAPA";
+                case "AM": return "AMAZONAS";
+                case "BA": return "BAHIA";
+                case "CE": return "CEARA";
+                case "DF": return "DISTRITO FEDERAL";
+                case "ES": return "ESPIRITO SANTO";
+                case "GO": return "GOIAS";
+                case "MT": return "MATO GROSSO";
+                case "MS": return "MATO GROSSO DO SUL";
+                case "MG": return "MINAS GERAIS";
+                case "PA": return "PARA";
+                case "PR": return "PARANA" ;   
+                case "PB": return "PARAIBA";
+                case "PE": return "PERNAMBUCO";
+                case "PI": return "PIAUI";
+                case "RN": return "RIO GRANDE DO NORTE";
+                case "RS": return "RIO GRANDE DO SUL";
+                case "RJ": return "RIO DE JANEIRO";
+                case "RO": return "RONDONIA";
+                case "RR": return "RORAIMA";
+                case "SC": return "SANTA CATARINA";
+                case "SP": return "SAO PAULO";
+                case "SE": return "SERGIPE";
+                case "TO": return "TOCANTINS";
+                default: return $sigla;
+            }    
+        }
 
 
 	function afastamento($id_politico, $cargo, $cargo_uf, $data, $tipo, $motivo){
@@ -394,10 +457,8 @@
 					 OPTIONAL { ?DeclarationOfAssets rdfmoney:Price ?valor }
 
            			}";
-
-
 		$url = urlencode($endereco);
-		$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'+limit+1';
+		$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'+limit+1';
 
 		
 		$curl = curl_init();
@@ -408,11 +469,9 @@
 	    	$resposta = curl_exec( $curl );
 	    	curl_close($curl);
 
-
 		$achou = false;
 		$resposta_decoded = json_decode($resposta);
 
-		
 		//verifica se algum valor da consulta é diferente de null
 		foreach($resposta_decoded->results->bindings as $reg){
 			if($reg != null)
@@ -421,9 +480,7 @@
 			}
 		}
 	
-		
 		if($achou){
-		
 		$objects = array();
 		        $results = json_decode($resposta);//descodifica o objeto json para um array
 			//pega o valor dentro de dois array
@@ -435,11 +492,9 @@
 				   $objects[] = $obj;//guarda no array o objeto pretendido
 			       }
 
-
 			if (!empty($objects[0]->tipo)){ $NewTipo = $objects[0]->tipo ;}else{ $NewTipo = null;}
 			if (!empty($objects[0]->valor)){ $NewValor = $objects[0]->valor ;}else{ $NewValor = null;}
 
-			
 			$format = 'application/sparql-results+xml';
 
 			//deletando dados para inserir dados novos
@@ -449,13 +504,12 @@
 					 ?DeclarationOfAssets dcterms:description \"$descricao\" .
 };";			
 
-
 			$endereco = "DELETE { ?DeclarationOfAssets dcterms:type \"$NewTipo\" } $where
 				    DELETE { ?DeclarationOfAssets rdfmoney:Price \"$NewValor\" }  $where
 				";
 			
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -466,9 +520,6 @@
 		    	$resposta = curl_exec( $curl );
 
 		    	curl_close($curl);
-
-			
-
 			if ($tipo != null ){ $NewTipo = $tipo ;}else{ $NewTipo= $objects[0]->tipo ;}
 			if ($valor != null){ $NewValor = $valor ;}else{ $NewValor = $objects[0]->valor;}
 			
@@ -482,11 +533,8 @@
 					 ?declarationOfAssets timeline:atYear \"$ano\".
 					 ?declarationOfAssets polbr:DeclarationOfAssets ?DeclarationOfAssets .
 					 ?DeclarationOfAssets dcterms:description \"$descricao\" .}"; 
-			
-
-
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -497,11 +545,8 @@
 		    	$resposta = curl_exec( $curl );
 
 		    	curl_close($curl);
-
-
 		}
 		else{
-	
 			//é feita uma contagem de quantas declarações ele tem, para saber qual numero da proxima
 
 			$format = 'text/integer';
@@ -513,7 +558,7 @@
 		   			}";
 
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
 		
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -523,28 +568,27 @@
 		    	$contador = curl_exec( $curl );
 		    	curl_close($curl);
 
-
-
 			//agora é feita a inserção
 
 			$contador = $contador + 1 ;
 			
 			$format = 'application/sparql-results+xml';
 		
-			$endereco = "insert data {  
-						 <http://ligadonospoliticos.com.br/politico/$id_politico> polbr:declarationOfAssets _:declaration .
-						 _:declaration timeline:atYear \"$ano\" .
-						 _:declaration polbr:DeclarationOfAssets _:DeclarationOf . 
-					         _:DeclarationOf rdf:type being:owns .
-					         _:DeclarationOf biblio:number \"$contador\" .
-				                 _:DeclarationOf dcterms:description \"$descricao\" .
-				                 _:DeclarationOf dcterms:type \"$tipo\" .
-						 _:DeclarationOf rdfmoney:Price \"$valor\" .
-		   			}";
-
-
+			$endereco = "insert {  
+						 ?x polbr:DeclarationOfAssets _:b .
+                                                 _:b rdf:type being:owns .
+					         _:b biblio:number \"$contador\" .
+				                 _:b dcterms:description \"$descricao\" .
+				                 _:b dcterms:type \"$tipo\" .
+						 _:b rdfmoney:Price \"$valor\" .
+		   			}WHERE {
+                                            select ?x { 
+                                              <http://ligadonospoliticos.com.br/politico/$id_politico> polbr:declarationOfAssets ?x .
+                                              ?x  timeline:atYear \"$ano\". 
+                                            } 
+                                        }";
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';			
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -556,7 +600,7 @@
 		    	curl_close($curl);
 
 
-		}		
+		}		  
 
 	}
 
@@ -585,9 +629,9 @@
 
            			}";
 
-
+                echo $endereco;
 		$url = urlencode($endereco);
-		$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'+limit+1';
+		$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'+limit+1';
 
 		
 		$curl = curl_init();
@@ -661,9 +705,9 @@
 				     DELETE { ?election polbr:CNPJ \"$NewCnpjCampanha\" } $where
 
 				";
-			
+			 echo $endereco;
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -710,9 +754,9 @@
 					 ?election timeline:atYear \"$ano\".}"; 
 			
 
-
+                         echo $endereco;
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -747,9 +791,9 @@
 						 _:election polbr:CNPJ \"$cnpj_campanha\" .
 		   			}";
 
-
+                         echo $endereco;
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';			
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -768,41 +812,30 @@
 	
 		
 	function endereco_parlamentar_politico($id_politico, $anexo, $ala, $gabinete, $email, $telefone, $fax, $tipo, $rua, $bairro, $cidade, $estado, $CEP, $CNPJ, $telefone_parlamento, $disque, $site){
-
-
 		$format = 'application/sparql-results+json';
-		
-		$politico = "<http://ligadonospoliticos.com.br/politico/$id_politico>";
-
+		$politico = "<http://ligadonospoliticos.com.br/politico/".$id_politico.">";
+                echo "telefone:".$telefone;
 		$endereco = "select ?gabinete ?email ?fax ?tipo ?rua ?bairro ?cidade ?estado ?CEP ?CNPJ ?telefone_parlamento ?disque ?site {  
-					 $politico polbr:annex \"$anexo\" .
-					 $politico  polbr:wing \"$ala\" .
-					 $politico foaf:phone \"$telefone\" .
-					 OPTIONAL { $politico polbr:cabinet ?gabinete}
-					 OPTIONAL { $politico biblio:Email ?email }
-					 OPTIONAL { $politico vcard:fax ?fax }
-					 OPTIONAL { $politico po:Place ?tipo }
-					 OPTIONAL { $politico vcard:street-address ?rua }
-					 OPTIONAL { $politico polbr:district ?bairro }
-					 OPTIONAL { $politico vcard:locality ?cidade }
-					 OPTIONAL { $politico geospecies:State ?estado }
-					 OPTIONAL { $politico vcard:postal-code ?CEP }
-					 OPTIONAL { $politico polbr:CNPJ ?CNPJ }
-					 OPTIONAL { $politico foaf:phone ?telefone_parlamento }
-					 OPTIONAL { $politico foaf:phone ?disque }
-					 OPTIONAL { $politico foaf:homepage ?site }
-					 FILTER ( ?telefone != ?telefone_parlamento )
-  					 FILTER ( ?telefone != ?disque )
-  					 FILTER ( ?disque != ?telefone_parlamento )
-					 FILTER regex(?disque, \"0800\")
+					 $politico vcard:adr ?x
+					 OPTIONAL { ?x polbr:cabinet ?gabinete}
+					 OPTIONAL { ?x biblio:Email ?email }
+					 OPTIONAL { ?x vcard:fax ?fax }
+					 OPTIONAL { ?x po:Place ?tipo }
+					 OPTIONAL { ?x vcard:street-address ?rua }
+					 OPTIONAL { ?x polbr:district ?bairro }
+					 OPTIONAL { ?x vcard:locality ?cidade }
+					 OPTIONAL { ?x geospecies:State ?estado }
+					 OPTIONAL { ?x vcard:postal-code ?CEP }
+					 OPTIONAL { ?x polbr:CNPJ ?CNPJ }
+					 OPTIONAL { ?x foaf:phone ?telefone_parlamento }
+					 OPTIONAL { ?x foaf:phone ?disque }
+					 OPTIONAL { ?x foaf:homepage ?site }
+					 
 
            			}";
-
-
+                echo $endereco."<br>";
 		$url = urlencode($endereco);
-		$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'+limit+1';
-
-		
+		$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url;
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
 	    	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
@@ -810,14 +843,12 @@
 	    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
 	    	$resposta = curl_exec( $curl );
 	    	curl_close($curl);
-
-
 		$achou = false;
-		$resposta_decoded = json_decode($resposta);
-
+		echo $resposta;
+                $resposta_decoded = json_decode($resposta);
 		
 		//verifica se algum valor da consulta é diferente de null
-		foreach($resposta_decoded->results->bindings as $reg){
+		foreach($resposta_decoded->results->bindings[0] as $reg){
 			if($reg != null)
 			{
 				$achou = true;
@@ -825,8 +856,6 @@
 		}
 
 		if($achou){
-
-
 		$objects = array();
 		
 	        $results = json_decode($resposta);//descodifica o objeto json para um array
@@ -854,33 +883,31 @@
 			if (!empty($objects[0]->disque)){ $NewDisque = $objects[0]->disque ;}else{ $NewDisque = null;}
 			if (!empty($objects[0]->site)){ $NewSite = $objects[0]->site ;}else{ $NewSite = null;}
 	
-			
 			$format = 'application/sparql-results+xml';
-
 			//deletando dados para inserir dados novos
-			$where = "WHERE {  $politico polbr:annex \"$anexo\" .
-					   $politico  polbr:wing \"$ala\" .
-					   $politico foaf:phone \"$telefone\" .
-};";			
+			$where = "WHERE {select ?x {
+                                            $politico vcard:adr ?x 
+                                        }
+                                    };";			
 		
-			$endereco = "DELETE { $politico polbr:cabinet \"$NewGabinete\" } $where
-				     DELETE { $politico biblio:Email \"$NewEmail\" } $where
-				     DELETE { $politico vcard:fax \"$NewFax\" } $where
-				     DELETE { $politico po:Place \"$NewTipo\" } $where
-				     DELETE { $politico vcard:street-address \"$NewRua\" } $where
-				     DELETE { $politico polbr:district \"$NewBairro\" } $where
-				     DELETE { $politico vcard:locality \"$NewCidade\" } $where
-				     DELETE { $politico geospecies:State \"$NewEstado\" } $where
-				     DELETE { $politico vcard:postal-code \"$NewCEP\" } $where
-				     DELETE { $politico polbr:CNPJ \"$NewCNPJ\" } $where
-				     DELETE { $politico foaf:phone \"$NewTelefoneParl\" } $where
-				     DELETE { $politico foaf:phone \"$NewDisque\" } $where
-				     DELETE { $politico foaf:homepage \"$NewSite\" } $where
+			$endereco = "DELETE { ?x polbr:cabinet \"$NewGabinete\" } $where
+				     DELETE { ?x biblio:Email \"$NewEmail\" } $where
+				     DELETE { ?x vcard:fax \"$NewFax\" } $where
+				     DELETE { ?x po:Place \"$NewTipo\" } $where
+				     DELETE { ?x vcard:street-address \"$NewRua\" } $where
+				     DELETE { ?x polbr:district \"$NewBairro\" } $where
+				     DELETE { ?x vcard:locality \"$NewCidade\" } $where
+				     DELETE { ?x geospecies:State \"$NewEstado\" } $where
+				     DELETE { ?x vcard:postal-code \"$NewCEP\" } $where
+				     DELETE { ?x polbr:CNPJ \"$NewCNPJ\" } $where
+				     DELETE { ?x foaf:phone \"$NewTelefoneParl\" } $where
+				     DELETE { ?x foaf:phone \"$NewDisque\" } $where
+				     DELETE { ?x foaf:homepage \"$NewSite\" } $where
 
 				";
-			
+                        echo $endereco."<br>";
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -891,9 +918,6 @@
 		    	$resposta = curl_exec( $curl );
 
 		    	curl_close($curl);
-
-
-
 			if ($gabinete != null ){ $NewGabinete = $gabinete ;}else{ $NewGabinete= $objects[0]->gabinete ;}
 			if ($email != null){ $NewEmail = $email ;}else{ $NewEmail = $objects[0]->email;}
 			if ($fax != null ){ $NewFax = $fax ;}else{ $NewFax= $objects[0]->fax ;}
@@ -904,35 +928,31 @@
 			if ($estado != null){ $NewEstado = $estado ;}else{ $NewEstado = $objects[0]->estado;}
 			if ($CEP != null ){ $NewCEP = $CEP ;}else{ $NewCEP= $objects[0]->CEP ;}
 			if ($CNPJ != null){ $NewCNPJ = $CNPJ ;}else{ $NewCNPJ = $objects[0]->CNPJ;}
-			if ($telefone_parlamento != null ){ $NewTelefoneParl = $telefone_parlamento ;}else{ $NewTelefoneParl= $objects[0]->telefone_parlamento ;}
+			if ($telefone != null ){ $NewTelefoneParl = $telefone ;}else{ $NewTelefoneParl= $objects[0]->telefone_parlamento ;}
 			if ($disque != null){ $NewDisque = $disque ;}else{ $NewDisque = $objects[0]->disque;}
 			if ($site != null ){ $NewSite = $site ;}else{ $NewSite= $objects[0]->site ;}
-
-
 			//inserindo os novos
-			$endereco = "insert {  
-						  $politico polbr:cabinet \"$NewGabinete\".
-				   		  $politico biblio:Email \"$NewEmail\" .
-				     		  $politico vcard:fax \"$NewFax\" .
-				     		  $politico po:Place \"$NewTipo\" .
-				    		  $politico vcard:street-address \"$NewRua\" .
-				     		  $politico polbr:district \"$NewBairro\" .
-				     		  $politico vcard:locality \"$NewCidade\" .
-				    		  $politico geospecies:State \"$NewEstado\" .
-				     		  $politico vcard:postal-code \"$NewCEP\" .
-				     		  $politico polbr:CNPJ \"$NewCNPJ\" .
-				     		  $politico foaf:phone \"$NewTelefoneParl\" .
-				     		  $politico foaf:phone \"$NewDisque\" .
-				     		  $politico foaf:homepage \"$NewSite\" .
-
-		   			} where{ $politico polbr:annex \"$anexo\" .
-					 	 $politico  polbr:wing \"$ala\" .
-					 	 $politico foaf:phone \"$telefone\" .}"; 
-			
-
-
+			$endereco = "insert {
+						  ?x polbr:cabinet \"$NewGabinete\".
+				   		  ?x biblio:Email \"$NewEmail\" .
+				     		  ?x vcard:fax \"$NewFax\" .
+				     		  ?x po:Place \"$NewTipo\" .
+				    		  ?x vcard:street-address \"$NewRua\" .
+				     		  ?x polbr:district \"$NewBairro\" .
+				     		  ?x vcard:locality \"$NewCidade\" .
+				    		  ?x geospecies:State \"$NewEstado\" .
+				     		  ?x vcard:postal-code \"$NewCEP\" .
+				     		  ?x polbr:CNPJ \"$NewCNPJ\" .
+				     		  ?x foaf:phone \"$NewTelefoneParl\" .
+				     		  ?x foaf:phone \"$NewDisque\" .
+				     		  ?x foaf:homepage \"$NewSite\" .
+		   			} WHERE {select ?x {
+                                                    $politico vcard:adr ?x 
+                                                }
+                                            }"; 
+			echo $endereco."<br>";
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -943,7 +963,7 @@
 		    	$resposta = curl_exec( $curl );
 
 		    	curl_close($curl);
-
+                        return $resposta;
 		}
 		else{
 
@@ -968,9 +988,9 @@
 				     		 $politico foaf:homepage \"$NewSite\" .
 		   			}";
 
-
+                        echo $endereco."----------<br>";
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';			
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -980,14 +1000,10 @@
 		    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
 		    	$resposta = curl_exec( $curl );
 		    	curl_close($curl);
-
-
 		}
 
 		
 	}
-	
-
 	
 	
 	function lideranca($id_politico, $descricao, $tipo, $data_inicio, $data_fim){
@@ -1525,14 +1541,18 @@
 	
 	function politico($nome_civil, $nome_parlamentar, $nome_pai, $nome_mae, $foto, $sexo, $cor, $data_nascimento, $estado_civil, $ocupacao, $grau_instrucao, $nacionalidade, $cidade_nascimento, $estado_nascimento, $cidade_eleitoral, $estado_eleitoral, $site, $email, $cargo, $cargo_uf, $partido, $situacao){
 
+                //separando cidade e estado de nascimento
+                //Entrada ex : BA-SALVADOR ; Saida : BAHIA E SALVADOR
+                $cidade_nasci = explode('-', $cidade_nascimento);
+                $cidade_nascimento = $cidade_nasci[1];
+                $estado_nascimento = converte_estado($cidade_nasci[0]);
 		//usando a função existePoli para descobrir o ID.
-		$id_politico = existePoli($nome_civil, $data_nascimento, $cidade_nascimento);
-
+		$id_politico = existePoli($nome_civil, $data_nascimento);
+                $id = $id_politico;
 		$politico = "<http://ligadonospoliticos.com.br/politico/$id_politico>";
-		
 		$format = 'application/sparql-results+json';
-		
-		$endereco = "select ?nome_parlamentar ?nome_pai ?nome_mae ?foto ?sexo ?cor ?estado_civil ?ocupacao ?grau_instrucao ?nacionalidade ?estado_nascimento ?cidade-estado_eleitoral ?site ?email ?cargo ?cargo_uf ?partido ?situacao {  
+		//*
+		$endereco = "select ?nome_parlamentar ?nome_pai ?nome_mae ?foto ?sexo ?cor ?estado_civil ?ocupacao ?grau_instrucao ?nacionalidade ?estado_nascimento ?site ?email ?cargo ?cargo_uf ?partido ?situacao {  
 
 					 OPTIONAL { $politico polbr:governmentalName ?nome_parlamentar }
 					 OPTIONAL { $politico bio:father ?nome_pai }
@@ -1546,8 +1566,7 @@
 					 OPTIONAL { $politico dcterms:educationLevel ?grau_instrucao }
 					 OPTIONAL { $politico dbpprop:nationality ?nacionalidade }
 					 OPTIONAL { $politico polbr:state-of-birth ?estado_nascimento }
-                                         OPTIONAL { $politico polbr:state-of-birth ?estado_nascimento_uri }
-					 OPTIONAL { $politico polbr:place-of-vote ?cidade-estado_eleitoral }
+                                         OPTIONAL { $politico polbr:place-of-birth ?cidade_nascimento }
 					 OPTIONAL { $politico foaf:homepage ?site }
 					 OPTIONAL { $politico biblio:Email ?email }
 					 OPTIONAL { $politico pol:Office ?cargo }
@@ -1555,25 +1574,10 @@
 					 OPTIONAL { $politico pol:party ?partido }
 					 OPTIONAL { $politico pol:party ?partido_uri }
 					 OPTIONAL { $politico polbr:situation ?situacao }
-					 FILTER ( ?ocupacao != ?ocupacao_uri )
-					 FILTER regex(?ocupacao_uri, \"http\")
-					 FILTER ( ?estado_nascimento != ?estado_nascimento_uri )
-					 FILTER regex(?estado_nascimento_uri, \"http\")
-					 FILTER ( ?partido != ?partido_uri )
-					 FILTER regex(?partido_uri, \"http\")
-
-
-					 OPTIONAL { ?term  timeline:endsAtDateTime ?data_fim}
-					
-
-           			}";
-
-		
-
+           			} limit 1";
 		$url = urlencode($endereco);
-		$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'+limit+1';
+		$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url;
 
-		
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
 	    	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
@@ -1581,12 +1585,8 @@
 	    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
 	    	$resposta = curl_exec( $curl );
 	    	curl_close($curl);
-
-
-
-		if($id_politivo != 0){
-
-
+                
+		if($id != 0){
 			$objects = array();
 		        $results = json_decode($resposta);//descodifica o objeto json para um array
 			//pega o valor dentro de dois array
@@ -1610,7 +1610,6 @@
 			if (!empty($objects[0]->grau_instrucao)){ $NewGrauInstrucao = $objects[0]->grau_instrucao ;}else{ $NewGrauInstrucao = null;}
 			if (!empty($objects[0]->nacionalidade)){ $NewNacionalidade = $objects[0]->nacionalidade ;}else{ $NewNacionalidade = null;}
 			if (!empty($objects[0]->estado_nascimento)){ $NewEstadoNascimento = $objects[0]->estado_nascimento ;}else{ $NewEstadoNascimento = null;}
-			if (!empty($objects[0]->cidade-estado_eleitoral)){ $NewCidadeEstadoEleitoral = $objects[0]->cidade-estado_eleitoral ;}else{ $NewCidadeEstadoEleitoral = null;}
 			if (!empty($objects[0]->site)){ $NewSite = $objects[0]->site ;}else{ $NewSite = null;}
 			if (!empty($objects[0]->email)){ $NewEmail = $objects[0]->email ;}else{ $NewEmail = null;}
 			if (!empty($objects[0]->cargo)){ $NewCargo = $objects[0]->cargo ;}else{ $NewCargo = null;}
@@ -1636,7 +1635,6 @@
 					DELETE DATA{ $politico dcterms:educationLevel \"$NewGrauInstrucao\" };
 					DELETE DATA{ $politico dbpprop:nationality \"$NewNacionalidade\" };
 					DELETE DATA{ $politico polbr:state-of-birth \"$NewEstadoNascimento\" };
-					DELETE DATA{ $politico polbr:place-of-vote \"$NewCidadeEstadoEleitoral\" };
 					DELETE DATA{ $politico foaf:homepage \"$NewSite\" };
 					DELETE DATA{ $politico biblio:Email \"$NewEmail\" };
 					DELETE DATA{ $politico pol:Office \"$NewCargo\" };
@@ -1645,9 +1643,8 @@
 					DELETE DATA{ $politico polbr:situation \"$NewSituacao\" };
 				
 				";
-			
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -1672,8 +1669,7 @@
 			if ($grau_instrucao != null ){ $NewGrauInstrucao = $grau_instrucao ;}else{ $NewGrauInstrucao = $objects[0]->grau_instrucao ;}
 			if ($nacionalidade != null ){ $NewNacionalidade = $nacionalidade ;}else{ $NewNacionalidade = $objects[0]->nacionalidade ;}
 			if ($estado_nascimento != null ){ $NewEstadoNascimento = $estado_nascimento ;}else{ $NewEstadoNascimento = $objects[0]->estado_nascimento ;}
-			if ($cidade_eleitoral != null && $estado_eleitoral != null){ $NewCidadeEstadoEleitoral = $cidade_eleitoral + " - " + $estado_eleitoral ;}else{ $NewCidadeEstadoEleitoral = $objects[0]->cidade-estado_eleitoral ;}
-			if ($site != null ){ $NewSite = $site ;}else{ $NewSite = $objects[0]->site ;}
+                        if ($site != null ){ $NewSite = $site ;}else{ $NewSite = $objects[0]->site ;}
 			if ($email != null ){ $NewEmail = $email ;}else{ $NewEmail = $objects[0]->email ;}
 			if ($cargo != null ){ $NewCargo = $cargo ;}else{ $NewCargo = $objects[0]->cargo ;}
 			if ($cargo_uf != null ){ $NewCargoUf = $cargo_uf ;}else{ $NewCargoUf = $objects[0]->cargo_uf ;}
@@ -1690,13 +1686,12 @@
 					$politico bio:mother \"$NewNomeMae\" .
 					$politico foaf:img \"$NewFoto\" .
 					$politico foaf:gender \"$NewSexo\" .
-					$politico person:complexion \"$NewCor\" .
+					$politico person:complexion \"$NewCor\" .   
 					$politico polbr:maritalStatus \"$NewEstadoCivil\" .
 					$politico person:occupation \"$NewOcupacao\" .
 					$politico dcterms:educationLevel \"$NewGrauInstrucao\" .
 					$politico dbpprop:nationality \"$NewNacionalidade\" .
-					$politico polbr:state-of-birth \"$NewEstadoNascimento\" .
-					$politico polbr:place-of-vote \"$NewCidadeEstadoEleitoral\" .
+					$politico polbr:state-of-birth \"$NewEstadoNascimento\" .   
 					$politico foaf:homepage \"$NewSite\" .
 					$politico biblio:Email \"$NewEmail\" .
 					$politico pol:Office \"$NewCargo\" .
@@ -1706,11 +1701,8 @@
 
 
 		   			}"; 
-			
-
-
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -1721,60 +1713,48 @@
 		    	$resposta = curl_exec( $curl );
 
 		    	curl_close($curl);
-
-
+                        return $id;
 		}
 		else{
-
-
-		     	//pegar o maior id e somar mais um
-
-			$format = 'application/sparql-results+xml';
-			$endereco = "select ?id { ?id ?p ?o .
-						FILTER regex(?id, \"<http://ligadonospoliticos.com.br/politico/\")
-		   			}ORDER BY ASC(?id)";
-
-			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'+limit+1';
-		
-			$curl = curl_init();
-			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
-		    	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
-		    	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
-		    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
-		    	$resposta = curl_exec( $curl );
-		    	curl_close($curl);
-
-			$resposta =  str_replace("http://ligadonospoliticos.com.br/politico/","", $resposta)
-
+		     	$resposta = prox();
+                        $id = $resposta;
 			//agora é feita a inserção
-			
-			$novopolitico = "<http://ligadonospoliticos.com.br/politico/$resposta>";
+			$novopolitico = "<http://ligadonospoliticos.com.br/politico/".$resposta.">";
 	
 			$format = 'application/sparql-results+xml';
 
 			$descricaoRDF =  "Descrição RDF de $nome_civil" ;
-			$siteRDF = "http://ligadonospoliticos.com.br/content/foaf.rdf";
+			$siteRDF = '<http://ligadonospoliticos.com.br/content/foaf.rdf>';
 	 		$dataatual = date("Ymd");
-			$siteprojeto = "http://ligadonospoliticos.com.br";
-			$sitecomId = "http://ligadonospoliticos.com.br/resource/$resposta/html ";
+			$siteprojeto = '<http://ligadonospoliticos.com.br>';
+			$sitecomId = "<http://ligadonospoliticos.com.br/resource/$resposta/html>";
+                        $BrazilianPoliticians = '<http://dbpedia.org/resource/Category:Brazilian_politicians>';
+                        $LivingPeople = '<http://dbpedia.org/resource/Category:Living_people>';
+                        $Politician = '<http://dbpedia.org/ontology/Politician>';
+                        $Person = '<http://dbpedia.org/ontology/Person>';
+                        $owlThing = '<http://www.w3.org/2002/07/owl#Thing>';
+                        $BrazilianPoli = '<http://dbpedia.org/class/yago/BrazilianPoliticians>';
 
 
-			$cidadeEstadoEleitoral = "$cidade_eleitoral - $estado_eleitoral";
+			//$cidadeEstadoEleitoral = "$cidade_eleitoral - $estado_eleitoral";
 
 			$endereco = "insert data {  
-						 $novopolitico a rdf:Description .
 						 $novopolitico rdfs:label \"$descricaoRDF\" .
-					         $novopolitico dc:creator \"$siteRDF\" .
-						 $novopolitico dc:publisher \"$siteRDF\" .
+                                                 $novopolitico skos:subject $BrazilianPoliticians. 
+                                                 $novopolitico skos:subject $LivingPeople. 
+                                                 $novopolitico rdf:type $Politician.
+                                                 $novopolitico rdf:type $Person.
+                                                 $novopolitico rdf:type $owlThing.
+                                                 $novopolitico rdf:type $BrazilianPoli.    
+					         $novopolitico dc:creator $siteRDF .
+						 $novopolitico dc:publisher $siteRDF .
 						 $novopolitico dc:created \"$dataatual\" .
-						 $novopolitico dc:rights \"$siteprojeto\" .
+						 $novopolitico dc:rights $siteprojeto .
 						 $novopolitico dcterms:language \"pt-br\" .
-						 $novopolitico foaf:primaryTopic \"$sitecomID\" .
+						 $novopolitico foaf:primaryTopic $sitecomId .
 						 $novopolitico foaf:name \"$nome_civil\".
 						 $novopolitico foaf:birthday \"$data_nascimento\" .
-						 $novopolitico being:place-of-birth \"$cidade_nascimento\" .
-
+						 $novopolitico being:place-of-birth \"$cidade_nascimento\" .    
 						 $novopolitico polbr:governmentalName \"$nome_parlamentar\" .
 						 $novopolitico bio:father \"$nome_pai\" .
 						 $novopolitico bio:mother \"$nome_mae\" .
@@ -1786,7 +1766,6 @@
 						 $novopolitico dcterms:educationLevel \"$grau_instrucao\" .
 						 $novopolitico dbpprop:nationality \"$nacionalidade\" .
 						 $novopolitico polbr:state-of-birth \"$estado_nascimento\" .
-						 $novopolitico polbr:place-of-vote \"$cidadeEstadoEleitoral\" .
 						 $novopolitico foaf:homepage \"$site\" .
 						 $novopolitico biblio:Email \"$email\" .
 						 $novopolitico pol:Office \"$cargo\" .
@@ -1796,10 +1775,8 @@
 
 				                 
 		   			}";
-
-
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';			
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -1809,13 +1786,14 @@
 		    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
 		    	$resposta = curl_exec( $curl );
 		    	curl_close($curl);
+                        return $id;
 
 		}
 
-		}
+    }
 
 	
-	}
+	
 
 
 	function pronunciamento($id_politico, $tipo, $data, $casa, $partido, $uf, $resumo){
@@ -1838,7 +1816,7 @@
 		
 
 		$url = urlencode($endereco);
-		$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'+limit+1';
+		$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'+limit+1';
 
 		
 		$curl = curl_init();
@@ -1897,7 +1875,7 @@
 				";
 			
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -1931,7 +1909,7 @@
 
 
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';		
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -1956,7 +1934,7 @@
 		   			}";
 
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
 		
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
@@ -1988,7 +1966,7 @@
 
 
 			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/ligados?query='.$url.'';			
+			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
 
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	

@@ -5,8 +5,8 @@
 	<meta name="description" content="">
 	<meta name="keywords" content="pol�ticos brasileiros dados governamentais abertos governo eletronico transparencia dados ligados web semantica">
 	<meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
-	<link rel="stylesheet" href="http://ligadonospoliticos.com.br/estilo.css" type="text/css" />
-	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://ligadonospoliticos.com.br/content/foaf.rdf" /> 
+	<link rel="stylesheet" href="http://localhost/ligadopoliticos/estilo.css" type="text/css" />
+	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://localhost/ligadopoliticos/content/foaf.rdf" /> 
 	<script language="javascript" src="http://ligadonospoliticos.com.br/fusioncharts/FusionCharts.js"></script>
 </head>
 <body>

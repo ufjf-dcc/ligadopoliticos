@@ -1,5 +1,5 @@
 <?php
-
+escreve("oi");
 escreve("
 
 <h2>Dados Ligados</h2>

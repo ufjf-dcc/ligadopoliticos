@@ -1,30 +1,30 @@
 			<ul>
 				<li>
-					<a class="item-menu" href="http://ligadonospoliticos.com.br/?pag=home"> Home </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/index.php"> Home </a>
 				</li>
 <!--				<li>
 					<a class="item-menu" href="http://ligadonospoliticos.com.br/?pag=noticias"> <?php escreve("Notícias","News"); ?> </a>
 				</li>
 -->
 				<li>
-					<a class="item-menu" href="http://ligadonospoliticos.com.br/?pag=visualizacoes"> <?php escreve("Visualizações","Visualizations"); ?> </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/visualizacoes.inc"> <?php escreve("Visualizações","Visualizations"); ?> </a>
 				</li>
 				<li>
-					<a class="item-menu" href="http://ligadonospoliticos.com.br/?pag=downloads"> Downloads </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/downloads.inc"> Downloads </a>
 				</li>
     		<li>
-					<a class="item-menu" href="http://ligadonospoliticos.com.br/?pag=dadosgovernamentaisabertos"> <?php escreve("Dados Abertos","Open Data"); ?> </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/dadosgovernamentaisabertos.inc.php"> <?php escreve("Dados Abertos","Open Data"); ?> </a>
 				</li>
 				<li>
-					<a class="item-menu" href="http://ligadonospoliticos.com.br/?pag=dadosligados"> <?php escreve("Dados Ligados","Linked Data"); ?> </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/dadosligados.inc"> <?php escreve("Dados Ligados","Linked Data"); ?> </a>
 				</li>
 				<li>
-					<a class="item-menu" href="http://ligadonospoliticos.com.br/?pag=sobre"> <?php escreve("Sobre o Projeto","About the Project"); ?> </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/sobre.inc.php"> <?php escreve("Sobre o Projeto","About the Project"); ?> </a>
 				</li>
 				<li>
-					<a class="item-menu" href="http://ligadonospoliticos.com.br/?pag=links"> Links </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/links.inc.php"> Links </a>
 				</li>
 				<li>
-					<a class="item-menu" href="http://ligadonospoliticos.com.br/?pag=contato"> <?php escreve("Contato","Contact"); ?> </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/contato.inc.php"> <?php escreve("Contato","Contact"); ?> </a>
 				</li>
 			</ul>

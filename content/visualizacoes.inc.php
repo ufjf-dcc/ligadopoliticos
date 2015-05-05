@@ -2,7 +2,7 @@
 <br />	
   <div class="visualizacoes">
 	  <a href='?pag=visualizacao&id_grafico=cargo&situacao=Em+Exercicio'>
-      <img src = "images/visualizacoes/cargo.png" border=0 width="160px" height="100px" /><br />
+      <img src = "../images/visualizacoes/cargo.png" border=0 width="160px" height="100px" /><br />
       <?php escreve("Cargo","Office") ?>
 	  </a>
 	</div>

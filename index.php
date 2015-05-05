@@ -6,8 +6,8 @@
 	<?php
         include_once ('./properties.php');
         include ('./consultasSPARQL.php');
-	include("config.php");
-	include("functions.php");
+	include("./config.php");
+	include("./functions.php");
 
 	$pag = '';
 

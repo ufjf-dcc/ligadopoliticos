@@ -5,12 +5,16 @@
 	<meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 	<meta property="og:title" content="LIGADO nos POLÍTICOS" />
 	<meta property="og:type" content="website" />
-	<meta property="og:url" content="http://ligadonospoliticos.com.br/" />
-	<meta property="og:image" content="http://ligadonospoliticos.com.br/images/mapa.png" />
+	<!--<meta property="og:url" content="http://ligadonospoliticos.com.br/" />-->
+        <meta property="og:url" content="http://localhost/ligadopoliticos/" />
+	<!--<meta property="og:image" content="http://ligadonospoliticos.com.br/images/mapa.png" />-->
+        <meta property="og:image" content="http://localhost/ligadopoliticos/images/mapa.png" />
 	<meta property="og:site_name" content="LIGADO nos POLÍTICOS" />
 	<meta property="fb:admins" content="570085484" />
-	<link rel="stylesheet" href="http://ligadonospoliticos.com.br/estilo.css" type="text/css" />
-	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://ligadonospoliticos.com.br/content/foaf.rdf" /> 
+	<!--<link rel="stylesheet" href="http://ligadonospoliticos.com.br/estilo.css" type="text/css" />-->
+        <link rel="stylesheet" href="http://localhost/ligadopoliticos/estilo.css" type="text/css" />
+<!--	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://ligadonospoliticos.com.br/content/foaf.rdf" /> -->
+        <link rel="meta" type="application/rdf+xml" title="FOAF" href="http://localhost/ligadopoliticos/content/foaf.rdf" />
 	<script language="javascript" src="http://ligadonospoliticos.com.br/fusioncharts/FusionCharts.js"></script>
 	<script language="javascript" type="text/javascript">
 		function visibilidadeCargo(){

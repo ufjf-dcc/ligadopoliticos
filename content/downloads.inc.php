@@ -43,19 +43,19 @@ For the most current data, please <a href='?pag=contato'>contact</a> us.
 
 ?>
 <ul>
-	<li><a href="downloads/afastamento.csv.zip"> <?php escreve("Afastamento","Absence"); ?> </a></li><br />
-	<li><a href="downloads/comissao.csv.zip"> <?php escreve("Comissão","Committee"); ?> </a></li><br />
-	<li><a href="downloads/comissao_politico.csv.zip"> <?php escreve("Comissão_Político","Committee_Politician"); ?> </a></li><br />
-	<li><a href="downloads/declaracao_bens.csv.zip"> <?php escreve("Declaração_Bens","Assets_Declaration"); ?> </a></li><br />
-	<li><a href="downloads/eleicao.csv.zip"> <?php escreve("Eleição","Election"); ?> </a></li><br />
-	<li><a href="downloads/endereco_parlamentar.csv.zip"> <?php escreve("Endereço_Parlamentar","Parliamentary_Address"); ?>  </a></li><br />
-	<li><a href="downloads/enrereco_parlamentar_politico.csv.zip"> <?php escreve("Endereço_Parlamentar_Político","Parliamentary_Address_Politician"); ?> </a></li><br />
-	<li><a href="downloads/lideranca.csv.zip"> <?php escreve("Liderança","Leadership"); ?> </a></li><br />
-	<li><a href="downloads/mandato.csv.zip"> <?php escreve("Mandato","Term"); ?> </a></li><br />
-	<li><a href="downloads/missao.csv.zip"> <?php escreve("Missão","Mission"); ?>  </a></li><br />
-	<li><a href="downloads/ocorrencia.csv.zip"> <?php escreve("Ocorrência","Occurrence"); ?> </a></li><br />
-	<li><a href="downloads/politico.csv.zip"> <?php escreve("Político","Politician"); ?> </a></li><br />
-	<li><a href="downloads/pronunciamento.csv.zip"> <?php escreve("Pronunciamento","Speech"); ?> </a></li><br />
-	<li><a href="downloads/proposicao.csv.zip"> <?php escreve("Proposição","Proposition"); ?> </a></li><br />
+	<li><a href="../downloads/afastamento.csv.zip"> <?php escreve("Afastamento","Absence"); ?> </a></li><br />
+	<li><a href="../downloads/comissao.csv.zip"> <?php escreve("Comissão","Committee"); ?> </a></li><br />
+	<li><a href="../downloads/comissao_politico.csv.zip"> <?php escreve("Comissão_Político","Committee_Politician"); ?> </a></li><br />
+	<li><a href="../downloads/declaracao_bens.csv.zip"> <?php escreve("Declaração_Bens","Assets_Declaration"); ?> </a></li><br />
+	<li><a href="../downloads/eleicao.csv.zip"> <?php escreve("Eleição","Election"); ?> </a></li><br />
+	<li><a href="../downloads/endereco_parlamentar.csv.zip"> <?php escreve("Endereço_Parlamentar","Parliamentary_Address"); ?>  </a></li><br />
+	<li><a href="../downloads/enrereco_parlamentar_politico.csv.zip"> <?php escreve("Endereço_Parlamentar_Político","Parliamentary_Address_Politician"); ?> </a></li><br />
+	<li><a href="../downloads/lideranca.csv.zip"> <?php escreve("Liderança","Leadership"); ?> </a></li><br />
+	<li><a href="../downloads/mandato.csv.zip"> <?php escreve("Mandato","Term"); ?> </a></li><br />
+	<li><a href="../downloads/missao.csv.zip"> <?php escreve("Missão","Mission"); ?>  </a></li><br />
+	<li><a href="../downloads/ocorrencia.csv.zip"> <?php escreve("Ocorrência","Occurrence"); ?> </a></li><br />
+	<li><a href="../downloads/politico.csv.zip"> <?php escreve("Político","Politician"); ?> </a></li><br />
+	<li><a href="../downloads/pronunciamento.csv.zip"> <?php escreve("Pronunciamento","Speech"); ?> </a></li><br />
+	<li><a href="../downloads/proposicao.csv.zip"> <?php escreve("Proposição","Proposition"); ?> </a></li><br />
 </ul>
 
