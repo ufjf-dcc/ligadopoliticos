@@ -21,6 +21,7 @@
             echo $politico[$j]."<br>";
             $j = $j + 1;
         }
+        
     ?>
  </body>
 </html> 

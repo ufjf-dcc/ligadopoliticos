@@ -5,8 +5,8 @@
  </head>
  <body>
     <?php
-        //http://divulgacand2014.tse.jus.br/divulga-cand-2014/eleicao/2014/UF/MG/candidatos/cargo/3
-        //http://divulgacand2014.tse.jus.br/divulga-cand-2014/eleicao/2014/idEleicao/143/cargo/3/UF/AL/candidato/20000000026
+        error_reporting(E_ALL);
+        ini_set("display_errors", 1);
         include ("upgrade.database.php");
         include("simple_html_dom/simple_html_dom.php");
         $url = "http://divulgacand2014.tse.jus.br/divulga-cand-2014/menu/2014";
@@ -28,7 +28,7 @@
                     foreach($dropdown->find('a') as $cat){
                         $categoria[$k] = "http://divulgacand2014.tse.jus.br".$cat->href;
                         $html00 = file_get_html($categoria[$k]);
-                        if($k==0){
+                        if($k==6){
                             foreach($html00->find('table[id="tbl-candidatos"]') as $candidatos){
                                 $i=0;
                                 foreach($candidatos->find('tr') as $tbody){
@@ -36,6 +36,7 @@
                                     $pol[$i] = $tbody;
                                         foreach($pol[$i]->find('a') as $li){
                                             $link = "http://divulgacand2014.tse.jus.br".$li->href;
+                                            //echo $link."<br>";
                                             $html2 = file_get_html($link);
 
                                             //RASPAGEM DE DADOS PESSOAIS DO POLITICO
@@ -56,11 +57,12 @@
                                                     else{
                                                         //echo $j."-" ;
                                                         //echo $pessoais[$j]."<br>";
+                                                        
                                                     }
                                                     $j++;
                                                     
                                                 }
-                                                
+                                                echo $pessoais[1]."-";
                                                 $nome_parlamentar = $pessoais[1]->plaintext; $numero = $pessoais[2]->plaintext; 
                                                 $nome_civil = $pessoais[3]->plaintext; $sexo ="MASCULINO" /*$pessoais[4]->plaintext*/; $data_nascimento = $pessoais[5]->plaintext;
                                                 $estado_civil = $pessoais[6]->plaintext;
@@ -72,12 +74,13 @@
                                                 $foto = null ; $estado_nascimento = null ; $cidade_eleitoral = null ; 
                                                 $estado_eleitoral = null ; $email = null; $cargo_uf = null;
                                                 
-                                                $resposta = politico($nome_civil, $nome_parlamentar, $nome_pai, 
+                                         
+                                                /*$resposta = politico($nome_civil, $nome_parlamentar, $nome_pai, 
                                                         $nome_mae, $foto, $sexo, $cor, $data_nascimento, $estado_civil, 
                                                         $ocupacao, $grau_instrucao, $nacionalidade, $cidade_nascimento, 
                                                         $estado_nascimento, $cidade_eleitoral, $estado_eleitoral, $site, 
                                                         $email, $cargo, $cargo_uf, $partido, $situacao);
-                                                //echo $resposta;
+                                                //echo $resposta;*/
                                             }
                                         }   
                                             
@@ -85,7 +88,7 @@
                                             foreach($html2->find('img[class="pull-left foto-candidato"]') as $foto){
                                                 $link = "http://divulgacand2014.tse.jus.br".$foto->src;
                                                 //echo "<img src ='$link' height='150' width='120'>" . '<br>';
-                                                foto_politico($link, $resposta);
+                                                //foto_politico($link, $resposta);
                                             }
                                             //RASPAGEM DE DECLARACAO DE BENS
                                             foreach($html2->find('div[id="tab-bens"]') as $declaracaoBens){
@@ -116,19 +119,20 @@
                                                     }
                                                 }
                                             }
-                                            echo "-------------<br>";
+                                            //echo "-------------<br>";
                                     
                                     }
                                     $i++;
                                     }
+                                    
                                 }  
-                            }
+                            }       
                         $k++;
                         }
                         
                     }
                 }
-            
+            echo $i."<br>";
         //}
         
         //CANDIDADOS A PRESIDENCIA E VICES. INDICE 0 
@@ -268,6 +272,7 @@
                 $i++;
             }  
         }*/
+        //}
     ?>
 
  </body>
