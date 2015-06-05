@@ -106,7 +106,35 @@
                 default: return $sigla;
             }    
         }
+        
+        function existepoliDecla($nome){
+            $aux = '"';
+            $format = 'application/sparql-results+json';
+            $endereco = "select ?id {?id foaf:name ".$aux.$nome.$aux.".  
+                            }";
+		$url = urlencode($endereco);
+		$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'+limit+1';
 
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
+	    	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+	    	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+	    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
+	    	$resposta = curl_exec( $curl );
+	    	curl_close($curl);
+		$resposta =  str_replace("http://ligadonospoliticos.com.br/politico/","", $resposta);	//retorna id do politico?!	
+                
+                $respostaJson = json_decode($resposta);
+                $respostaJson = $respostaJson->results;
+                $respostaJson = $respostaJson->bindings[0];
+                $respostaJson = $respostaJson->id;
+                $respostaJson = $respostaJson->value;
+                $respostaJson = (int)$respostaJson;
+		if($respostaJson == null){
+                    return 0;}
+		if($respostaJson != null){return $respostaJson;}
+
+	}
 
 	function afastamento($id_politico, $cargo, $cargo_uf, $data, $tipo, $motivo){
 
@@ -507,7 +535,6 @@
 			$endereco = "DELETE { ?DeclarationOfAssets dcterms:type \"$NewTipo\" } $where
 				    DELETE { ?DeclarationOfAssets rdfmoney:Price \"$NewValor\" }  $where
 				";
-			
 			$url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
@@ -533,7 +560,8 @@
 					 ?declarationOfAssets timeline:atYear \"$ano\".
 					 ?declarationOfAssets polbr:DeclarationOfAssets ?DeclarationOfAssets .
 					 ?DeclarationOfAssets dcterms:description \"$descricao\" .}"; 
-			$url = urlencode($endereco);
+			
+                        $url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
 			$curl = curl_init();
@@ -547,59 +575,147 @@
 		    	curl_close($curl);
 		}
 		else{
-			//é feita uma contagem de quantas declarações ele tem, para saber qual numero da proxima
-
+			
 			$format = 'text/integer';
-			$endereco = "select ?DeclarationOfAssets {  
-						 <http://ligadonospoliticos.com.br/politico/$id_politico>  polbr:declarationOfAssets ?declarationOfAssets.
-				?declarationOfAssets timeline:atYear \"$ano\".
-				?declarationOfAssets polbr:DeclarationOfAssets ?DeclarationOfAssets.
-	
+			$endereco = "select ?x {  
+						 <http://ligadonospoliticos.com.br/politico/6889>  polbr:declarationOfAssets ?x.
+						 ?x timeline:atYear \"$ano\" .
 		   			}";
-
+                        echo $endereco;
 			$url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
-		
+                        
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
 		    	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
 		    	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
 		    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
-		    	$contador = curl_exec( $curl );
+		    	$resultado = curl_exec( $curl );
 		    	curl_close($curl);
+                        echo $resultado."AQUI";
+                        //decisão se exite um black node para a inserção dentro do politico
+                        if($resultado != "0"){
+                            //é feita uma contagem de quantas declarações ele tem, para saber qual numero da proxima
+                        
+                            $format = 'text/integer';
+                            $endereco = "select ?DeclarationOfAssets {  
+                                                     <http://ligadonospoliticos.com.br/politico/$id_politico>  polbr:declarationOfAssets ?declarationOfAssets.
+                                                    ?declarationOfAssets timeline:atYear \"$ano\".
+                                                    ?declarationOfAssets polbr:DeclarationOfAssets ?DeclarationOfAssets.
 
-			//agora é feita a inserção
+                                            }";
+                            $url = urlencode($endereco);
+                            $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
 
-			$contador = $contador + 1 ;
-			
-			$format = 'application/sparql-results+xml';
-		
-			$endereco = "insert {  
-						 ?x polbr:DeclarationOfAssets _:b .
-                                                 _:b rdf:type being:owns .
-					         _:b biblio:number \"$contador\" .
-				                 _:b dcterms:description \"$descricao\" .
-				                 _:b dcterms:type \"$tipo\" .
-						 _:b rdfmoney:Price \"$valor\" .
-		   			}WHERE {
-                                            select ?x { 
-                                              <http://ligadonospoliticos.com.br/politico/$id_politico> polbr:declarationOfAssets ?x .
-                                              ?x  timeline:atYear \"$ano\". 
-                                            } 
-                                        }";
-			$url = urlencode($endereco);
-			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
+                            $curl = curl_init();
+                            curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
+                            curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+                            curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
+                            $contador = curl_exec( $curl );
+                            curl_close($curl);
+                            
+                            $contador = $contador + 1 ;
 
-			$curl = curl_init();
-			curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
-		    	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
-			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST"); 
-		    	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
-		    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
-		    	$resposta = curl_exec( $curl );
-		    	curl_close($curl);
+                            $format = 'application/sparql-results+xml';
 
+                            $endereco = "insert {  
+                                                     ?x polbr:DeclarationOfAssets _:b .
+                                                     _:b rdf:type being:owns .
+                                                     _:b biblio:number \"$contador\" .
+                                                     _:b dcterms:description \"$descricao\" .
+                                                     _:b dcterms:type \"$tipo\" .
+                                                     _:b rdfmoney:Price \"$valor\" .
+                                            }WHERE {
+                                                select ?x { 
+                                                  <http://ligadonospoliticos.com.br/politico/$id_politico> polbr:declarationOfAssets ?x .
+                                                  ?x  timeline:atYear \"$ano\". 
+                                                } 
+                                            }";
+                            //echo $endereco."<br>";
+                            $url = urlencode($endereco);
+                            $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
 
+                            $curl = curl_init();
+                            curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
+                            curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+                            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST"); 
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+                            curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
+                            $resposta = curl_exec( $curl );
+                            curl_close($curl);
+                        }
+                        
+                        else{
+                            $format = 'application/sparql-results+xml';
+
+                            $endereco = "insert data{ 
+                                                <http://ligadonospoliticos.com.br/politico/$id_politico> polbr:declarationOfAssets _:b.
+                                                _:b timeline:atYear \"$ano\".
+                                            }";
+                            //echo $endereco."<br>";
+                            $url = urlencode($endereco);
+                            $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
+
+                            $curl = curl_init();
+                            curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
+                            curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+                            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST"); 
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+                            curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
+                            $resposta = curl_exec( $curl );
+                            curl_close($curl);
+                            
+                            $format = 'text/integer';
+                            $endereco = "select ?DeclarationOfAssets {  
+                                                     <http://ligadonospoliticos.com.br/politico/$id_politico>  polbr:declarationOfAssets ?declarationOfAssets.
+                                                    ?declarationOfAssets timeline:atYear \"$ano\".
+                                                    ?declarationOfAssets polbr:DeclarationOfAssets ?DeclarationOfAssets.
+
+                                            }";
+                            //echo $endereco."<br>";
+                            $url = urlencode($endereco);
+                            $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
+
+                            $curl = curl_init();
+                            curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
+                            curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+                            curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
+                            $contador = curl_exec( $curl );
+                            curl_close($curl);
+                            
+                            $contador = $contador + 1 ;
+
+                            $format = 'application/sparql-results+xml';
+
+                            $endereco = "insert {  
+                                                     ?x polbr:DeclarationOfAssets _:b .
+                                                     _:b rdf:type being:owns .
+                                                     _:b biblio:number \"$contador\" .
+                                                     _:b dcterms:description \"$descricao\" .
+                                                     _:b dcterms:type \"$tipo\" .
+                                                     _:b rdfmoney:Price \"$valor\" .
+                                            }WHERE {
+                                                select ?x { 
+                                                  <http://ligadonospoliticos.com.br/politico/$id_politico> polbr:declarationOfAssets ?x .
+                                                  ?x  timeline:atYear \"$ano\". 
+                                                } 
+                                            }";
+                            //echo $endereco."<br>";
+                            $url = urlencode($endereco);
+                            $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
+
+                            $curl = curl_init();
+                            curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
+                            curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+                            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST"); 
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+                            curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
+                            $resposta = curl_exec( $curl );
+                            curl_close($curl);
+                        }
+                        
 		}		  
 
 	}
@@ -1598,7 +1714,6 @@
 				   $objects[] = $obj;//guarda no array o objeto pretendido
 			       }
 
-
 			if (!empty($objects[0]->nome_parlamentar)){ $NewNomeParlamentar = $objects[0]->nome_parlamentar ;}else{ $NewNomeParlamentar = null;}
 			if (!empty($objects[0]->nome_pai)){ $NewNomePai = $objects[0]->nome_pai ;}else{ $NewNomePai = null;}
 			if (!empty($objects[0]->nome_mae )){ $NewNomeMae = $objects[0]->nome_mae ;}else{ $NewNomeMae = null;}
@@ -1621,8 +1736,6 @@
 			$format = 'application/sparql-results+xml';
 
 			//deletando dados para inserir dados novos
-		
-
 			$endereco = "
 					DELETE DATA{ $politico polbr:governmentalName \"$NewNomeParlamentar\" };
 					DELETE DATA{ $politico bio:father \"$NewNomePai\"};
@@ -1653,10 +1766,7 @@
 		    	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
 		    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
 		    	$resposta = curl_exec( $curl );
-
 		    	curl_close($curl);
-
-			
 
 			if ($nome_parlamentar != null ){ $NewNomeParlamentar = $nome_parlamentar ;}else{ $NewNomeParlamentar = $objects[0]->nome_palarmentar ;}
 			if ($nome_pai != null ){ $NewNomePai = $nome_pai ;}else{ $NewNomePai = $objects[0]->nome_pai ;}
@@ -1675,9 +1785,6 @@
 			if ($cargo_uf != null ){ $NewCargoUf = $cargo_uf ;}else{ $NewCargoUf = $objects[0]->cargo_uf ;}
 			if ($partido != null ){ $NewPartido = $partido ;}else{ $NewPartido = $objects[0]->partido ;}
 			if ($situacao != null ){ $NewSituacao = $situacao ;}else{ $NewSituacao = $objects[0]->situacao ;}
-
-			
-			
 
 			//inserindo os novos
 			$endereco = "insert data{  
@@ -1711,7 +1818,6 @@
 		    	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
 		    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
 		    	$resposta = curl_exec( $curl );
-
 		    	curl_close($curl);
                         return $id;
 		}
