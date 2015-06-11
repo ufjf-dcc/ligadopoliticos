@@ -1,11 +1,10 @@
 <html>
  <head>
   <meta  charset=utf-8 />
-  <title> Senado Raspagem </title>
+  <title> Excelencias Raspagem </title>
  </head>
  <body>
     <?php
-        // raspagem do site http://www.pm.sc.gov.br/desaparecidos/
         include("simple_html_dom/simple_html_dom.php");
         $urlBase = "http://www.excelencias.org.br/@busca.php?";
         $html = file_get_html($urlBase);

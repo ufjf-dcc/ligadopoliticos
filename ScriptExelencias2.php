@@ -5,6 +5,9 @@
  </head>
  <body>
     <?php
+        $login = "marcos:123" ;
+        error_reporting(E_ALL);
+        ini_set("display_errors", 1);
         include ("upgrade.database.php");
         include("simple_html_dom/simple_html_dom.php");
         $urlBase = "http://www.excelencias.org.br/@busca.php?";
@@ -18,6 +21,7 @@
         }
         $j = 0;
         while($j!=$i){
+            $i = 5;
             $urlBase = "http://www.excelencias.org.br/$politico[$j]";
             $html = file_get_html($urlBase);
 
@@ -27,29 +31,25 @@
                     $idBens = str_replace("traz_bens(", "", $idBens);
                     $idBens = str_replace(")", "", $idBens);
                 }
-                //echo "Historico de candidaturas <br>";
+                /* HISTORICO DE CANDIDATURAS
                 foreach($fund->find('span[class="txt_peq"]') as $hist){ //script historico de candidaturas
                     //echo $hist->plaintext."<br>";
-                }
+                }*/
             }
+
             foreach($html->find('div[id="espaco"]') as $espaco){
-                $i=0;
+                $q=0;
                 foreach($espaco->find('p[class="txt"]') as $texto){
-                    $textoo[$i]=$texto->plaintext;
-                    $i++;
+                    $textoo[$q]=$texto->plaintext;
+                    $q++;
                 }
                 $nome = mb_strtoupper(str_replace("Nome de batismo: ", "",$textoo[0]), 'UTF-8');
                 $id_politico = existePoliDecla($nome);
-                //echo $id_politico."<br>";
             }
 
-
-            //echo "<br>";
-            //echo "Declaração de Bens <br>";
             //SCRIPT DECLARACAO DE BENS 
             $urlBase2 = "http://www.asclaras.org.br/partes/candidato/@bens.php?id=".$idBens."&orig=exc";
             $html1 = file_get_html($urlBase2);
-
             $k = 0;
             foreach ($html1->find('table') as $decla){
                 $declaracao[$k] = $decla;
@@ -85,10 +85,12 @@
                         $valor = str_replace(".", "", $dados[$x]);
                         $valor = (int)str_replace("R$", "", $valor);
                         //echo $id_politico."1";
-                        $resposta = declaracao_bens($id_politico, "2014", $descricao, $tipo, $valor);
-
+                        if ($j == 0 ) {
+                            echo $id_politico. "<br>";
+                            $resposta = declaracao_bens($id_politico, "2014", $descricao, $tipo, $valor);
+                        }
                     }
-                    echo "---------<br>";
+                    //echo "---------<br>";
                 }
             }
         

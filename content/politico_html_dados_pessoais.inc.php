@@ -33,7 +33,7 @@
               OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:situation ?situacao }.        
               FILTER isliteral(?cidade_nascimento).
               FILTER isliteral(?partido)
-                      }');
+                      }LIMIT 1');
         foreach ($sparql1 as $row){
                 $nome_civil = $row['nome_civil'];
 		//$foto = $row['foto'];	

@@ -578,10 +578,9 @@
 			
 			$format = 'text/integer';
 			$endereco = "select ?x {  
-						 <http://ligadonospoliticos.com.br/politico/6889>  polbr:declarationOfAssets ?x.
+						 <http://ligadonospoliticos.com.br/politico/$id_politico>  polbr:declarationOfAssets ?x.
 						 ?x timeline:atYear \"$ano\" .
 		   			}";
-                        echo $endereco;
 			$url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
                         
@@ -592,7 +591,6 @@
 		    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
 		    	$resultado = curl_exec( $curl );
 		    	curl_close($curl);
-                        echo $resultado."AQUI";
                         //decisão se exite um black node para a inserção dentro do politico
                         if($resultado != "0"){
                             //é feita uma contagem de quantas declarações ele tem, para saber qual numero da proxima
@@ -653,7 +651,6 @@
                                                 <http://ligadonospoliticos.com.br/politico/$id_politico> polbr:declarationOfAssets _:b.
                                                 _:b timeline:atYear \"$ano\".
                                             }";
-                            //echo $endereco."<br>";
                             $url = urlencode($endereco);
                             $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
 
@@ -673,7 +670,6 @@
                                                     ?declarationOfAssets polbr:DeclarationOfAssets ?DeclarationOfAssets.
 
                                             }";
-                            //echo $endereco."<br>";
                             $url = urlencode($endereco);
                             $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
 
@@ -1834,25 +1830,25 @@
 	 		$dataatual = date("Ymd");
 			$siteprojeto = '<http://ligadonospoliticos.com.br>';
 			$sitecomId = "<http://ligadonospoliticos.com.br/resource/$resposta/html>";
-                        $BrazilianPoliticians = '<http://dbpedia.org/resource/Category:Brazilian_politicians>';
-                        $LivingPeople = '<http://dbpedia.org/resource/Category:Living_people>';
-                        $Politician = '<http://dbpedia.org/ontology/Politician>';
-                        $Person = '<http://dbpedia.org/ontology/Person>';
-                        $owlThing = '<http://www.w3.org/2002/07/owl#Thing>';
-                        $BrazilianPoli = '<http://dbpedia.org/class/yago/BrazilianPoliticians>';
+            $BrazilianPoliticians = '<http://dbpedia.org/resource/Category:Brazilian_politicians>';
+            $LivingPeople = '<http://dbpedia.org/resource/Category:Living_people>';
+            $Politician = '<http://dbpedia.org/ontology/Politician>';
+            $Person = '<http://dbpedia.org/ontology/Person>';
+            $owlThing = '<http://www.w3.org/2002/07/owl#Thing>';
+            $BrazilianPoli = '<http://dbpedia.org/class/yago/BrazilianPoliticians>';
 
 
 			//$cidadeEstadoEleitoral = "$cidade_eleitoral - $estado_eleitoral";
 
-			$endereco = "insert data {  
+			$endereco = "insert data {
 						 $novopolitico rdfs:label \"$descricaoRDF\" .
-                                                 $novopolitico skos:subject $BrazilianPoliticians. 
-                                                 $novopolitico skos:subject $LivingPeople. 
-                                                 $novopolitico rdf:type $Politician.
-                                                 $novopolitico rdf:type $Person.
-                                                 $novopolitico rdf:type $owlThing.
-                                                 $novopolitico rdf:type $BrazilianPoli.    
-					         $novopolitico dc:creator $siteRDF .
+                         $novopolitico skos:subject $BrazilianPoliticians.
+                         $novopolitico skos:subject $LivingPeople.
+                         $novopolitico rdf:type $Politician.
+                         $novopolitico rdf:type $Person.
+                         $novopolitico rdf:type $owlThing.
+                         $novopolitico rdf:type $BrazilianPoli.
+                         $novopolitico dc:creator $siteRDF .
 						 $novopolitico dc:publisher $siteRDF .
 						 $novopolitico dc:created \"$dataatual\" .
 						 $novopolitico dc:rights $siteprojeto .
@@ -1860,7 +1856,7 @@
 						 $novopolitico foaf:primaryTopic $sitecomId .
 						 $novopolitico foaf:name \"$nome_civil\".
 						 $novopolitico foaf:birthday \"$data_nascimento\" .
-						 $novopolitico being:place-of-birth \"$cidade_nascimento\" .    
+						 $novopolitico being:place-of-birth \"$cidade_nascimento\" .
 						 $novopolitico polbr:governmentalName \"$nome_parlamentar\" .
 						 $novopolitico bio:father \"$nome_pai\" .
 						 $novopolitico bio:mother \"$nome_mae\" .
@@ -1878,8 +1874,6 @@
 						 $novopolitico polbr:officeState \"$cargo_uf\" .
 						 $novopolitico pol:party \"$partido\" .
 						 $novopolitico polbr:situation \"$situacao\" .
-
-				                 
 		   			}";
 			$url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
