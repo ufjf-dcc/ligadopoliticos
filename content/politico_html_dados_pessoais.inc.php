@@ -42,7 +42,7 @@
                
 		echo "<h2>".$nome_civil."&nbsp;&nbsp;<a href='../../../ligadopoliticos/politico/$recurso/rdf' style='decoration:none;'><img src='../../images/rdf_icon.gif' border=0 height='18px' /></a><iframe src='http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fligadonospoliticos.com.br%2Fpolitico%2F".$recurso."%2Fhtml%2F&action=like' scrolling='no' frameborder='0' style='height: 62px; width: 100%' allowTransparency='true'></iframe></h2>";
 		
-		if(isset($row['foto']) )
+		//if(isset($row['foto']) )
 		//http://ligadonospoliticos.com.br/images/politicos/1.jpeg  
                 echo "<div id='foto' style='float:right;'> <img src= ../../images/politicos/".$recurso.".jpeg></div>";
 		echo "<div id='dados_atuais' style='float:left;'>"; 
