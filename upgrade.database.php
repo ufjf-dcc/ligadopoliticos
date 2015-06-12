@@ -123,7 +123,7 @@
 	    	$resposta = curl_exec( $curl );
 	    	curl_close($curl);
 		$resposta =  str_replace("http://ligadonospoliticos.com.br/politico/","", $resposta);	//retorna id do politico?!	
-                
+
                 $respostaJson = json_decode($resposta);
                 $respostaJson = $respostaJson->results;
                 $respostaJson = $respostaJson->bindings[0];
@@ -621,9 +621,11 @@
                                                      ?x polbr:DeclarationOfAssets _:b .
                                                      _:b rdf:type being:owns .
                                                      _:b biblio:number \"$contador\" .
-                                                     _:b dcterms:description \"$descricao\" .
-                                                     _:b dcterms:type \"$tipo\" .
-                                                     _:b rdfmoney:Price \"$valor\" .
+                                                     _:b dcterms:description \"$descricao\" .";
+                                                    if(isset($tipo))
+                                                        $endereco = $endereco . "_:b dcterms:type \"$tipo\" .";
+                                                    $endereco = $endereco .
+                                                     "_:b rdfmoney:Price \"$valor\" .
                                             }WHERE {
                                                 select ?x { 
                                                   <http://ligadonospoliticos.com.br/politico/$id_politico> polbr:declarationOfAssets ?x .

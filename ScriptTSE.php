@@ -9,6 +9,7 @@
         ini_set("display_errors", 1);
         include("simple_html_dom/simple_html_dom.php");
         include('controleRaspagem.php');
+        include('upgrade.database.php');
         $url = "http://divulgacand2014.tse.jus.br/divulga-cand-2014/menu/2014";
         $html= file_get_html($url);
         if($html != null){
@@ -20,7 +21,7 @@
             $arquivo = file('/var/www/html/ligadopoliticos/controlador.txt');
                 $t = (int)$arquivo[0];
                 $c = 0;
-                $url0="http://divulgacand2014.tse.jus.br".$estados[27];
+                $url0="http://divulgacand2014.tse.jus.br".$estados[1];
                 $html0= file_get_html($url0);
                 foreach($html0->find('div[class="col-md-4"]') as $button){// escolher entre governador, vice, senadors, dep federal e estadual
                     foreach($button->find('ul[class="dropdown-menu"]') as $dropdown){
@@ -39,9 +40,11 @@
                                             foreach($pol[$i]->find('a') as $li){
                                                 if($c >= $t){
                                                     $link= "http://divulgacand2014.tse.jus.br".$li->href;
-                                                    echo $link."<br>";
-                                                    $resposta = rasPolitico($link);
-                                                    echo $t."-";
+                                                    //echo $link."<br>";
+                                                    if($c==0){
+                                                        $resposta = rasPolitico($link);
+                                                    }
+                                                    //echo $t."-";
                                                     $t++;
                                                     file_put_contents('/var/www/html/ligadopoliticos/controlador.txt',$t);
                                                 }

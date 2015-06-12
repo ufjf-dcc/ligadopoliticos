@@ -46,19 +46,36 @@
 
 				aba_politico_html('No Facebook');
                                 
-				$sparql2 = consultaSPARQL(' select ?tipo ?descricao ?valor 
+				$sparql2a = consultaSPARQL(' select ?tipo ?descricao ?valor
                                 where{
                                   <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:declarationOfAssets ?x.
+                                  ?x timeline:atYear "2010".
                                   ?x polbr:DeclarationOfAssets ?y.
                                   ?y dcterms:description ?descricao.
                                   ?y dcterms:type ?tipo.
                                   ?y rdfmoney:Price ?valor
                                   }');
-                                $cont_declaracao_bens = count($sparql2); 
-                                if ($cont_declaracao_bens > 0){	
+                                $cont_declaracao_bens_a = count($sparql2a);
+
+                if ($cont_declaracao_bens_a > 0){
 					aba_politico_html('Declaração de Bens');	
 				}
-				
+
+                $sparql2b = consultaSPARQL(' select ?tipo ?descricao ?valor
+                                where{
+                                  <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:declarationOfAssets ?x.
+                                  ?x timeline:atYear "2014".
+                                  ?x polbr:DeclarationOfAssets ?y.
+                                  ?y dcterms:description ?descricao.
+                                  ?y dcterms:type ?tipo.
+                                  ?y rdfmoney:Price ?valor
+                                  }');
+                $cont_declaracao_bens_b = count($sparql2b);
+
+                if ($cont_declaracao_bens_a == 0 && $cont_declaracao_bens_b > 0 ){
+                    aba_politico_html('Declaração de Bens');
+                }
+
 				$sparql6 = consultaSPARQL(' SELECT ?anexo ?ala ?gabinete ?email ?telefone ?fax
                                 WHERE	{
                                         <http://ligadonospoliticos.com.br/politico/'.$recurso.'> vcard:adr ?x
