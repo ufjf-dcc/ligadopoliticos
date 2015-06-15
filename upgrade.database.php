@@ -531,6 +531,7 @@
 					 ?declarationOfAssets polbr:DeclarationOfAssets ?DeclarationOfAssets .
 					 ?DeclarationOfAssets dcterms:description \"$descricao\" .
 };";			
+    //
 
 			$endereco = "DELETE { ?DeclarationOfAssets dcterms:type \"$NewTipo\" } $where
 				    DELETE { ?DeclarationOfAssets rdfmoney:Price \"$NewValor\" }  $where

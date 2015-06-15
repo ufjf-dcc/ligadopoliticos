@@ -53,10 +53,10 @@
                                   ?x polbr:DeclarationOfAssets ?y.
                                   ?y dcterms:description ?descricao.
                                   ?y dcterms:type ?tipo.
-                                  ?y rdfmoney:Price ?valor
+                                  ?y rdfmoney:Price ?valor.
                                   }');
                                 $cont_declaracao_bens_a = count($sparql2a);
-
+                //
                 if ($cont_declaracao_bens_a > 0){
 					aba_politico_html('Declaração de Bens');	
 				}
@@ -67,8 +67,8 @@
                                   ?x timeline:atYear "2014".
                                   ?x polbr:DeclarationOfAssets ?y.
                                   ?y dcterms:description ?descricao.
-                                  ?y dcterms:type ?tipo.
-                                  ?y rdfmoney:Price ?valor
+                                  OPTIONAL{ ?y dcterms:type ?tipo.}
+                                  ?y rdfmoney:Price ?valor.
                                   }');
                 $cont_declaracao_bens_b = count($sparql2b);
 

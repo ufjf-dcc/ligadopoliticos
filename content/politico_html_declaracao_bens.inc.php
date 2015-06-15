@@ -7,7 +7,7 @@
 		<td class='topo_tabela'>N</sup></td>
 		<td class='topo_tabela'>Descrição</td>
 		<td class='topo_tabela'>Tipo</td>	
-		<td class='topo_tabela'>Valor</td>
+		<td class='topo_tabela'>Valor(R$)</td>
 	</tr>";
 
     $soma = 0;
@@ -39,18 +39,19 @@
 		<td class='topo_tabela'>N</sup></td>
 		<td class='topo_tabela'>Descrição</td>
 		<td class='topo_tabela'>Tipo</td>
-		<td class='topo_tabela'>Valor</td>
+		<td class='topo_tabela'>Valor(R$)</td>
 	</tr>";
-
+        //
         $soma = 0;
         foreach ($sparql2b as $row){
             $valor = number_format($row['valor'], 2, ',' , '.') ;
-            if($row['tipo']==null) $row['titulo'] = " ";
+            if(isset($row['tipo'])) $tipo =$row['tipo'] ;
+            else $tipo = "";
             echo "
 		<tr>
 			<td>$conta_declaracao</td>
 			<td>".$row['descricao']."</td>
-			<td>".$row['tipo']."</td>
+			<td>".$tipo."</td>
 			<td>".$valor."</td>
 		</tr>";
             $conta_declaracao++;
