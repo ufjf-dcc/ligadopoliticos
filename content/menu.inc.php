@@ -1,4 +1,5 @@
-			<ul>
+
+                <ul>
 				<li>
 					<a class="item-menu" href="http://localhost/ligadopoliticos/index.php"> Home </a>
 				</li>
@@ -7,16 +8,16 @@
 				</li>
 -->
 				<li>
-					<a class="item-menu" href="http://localhost/ligadopoliticos/content/visualizacoes.inc"> <?php escreve("Visualizações","Visualizations"); ?> </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/visualizacoes.inc.php"> <?php escreve("Visualizações","Visualizations"); ?> </a>
 				</li>
 				<li>
-					<a class="item-menu" href="http://localhost/ligadopoliticos/content/downloads.inc"> Downloads </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/downloads.inc.php"> Downloads </a>
 				</li>
     		<li>
 					<a class="item-menu" href="http://localhost/ligadopoliticos/content/dadosgovernamentaisabertos.inc.php"> <?php escreve("Dados Abertos","Open Data"); ?> </a>
 				</li>
 				<li>
-					<a class="item-menu" href="http://localhost/ligadopoliticos/content/dadosligados.inc"> <?php escreve("Dados Ligados","Linked Data"); ?> </a>
+					<a class="item-menu" href="http://localhost/ligadopoliticos/content/dadosligados.inc.php"> <?php escreve("Dados Ligados","Linked Data"); ?> </a>
 				</li>
 				<li>
 					<a class="item-menu" href="http://localhost/ligadopoliticos/content/sobre.inc.php"> <?php escreve("Sobre o Projeto","About the Project"); ?> </a>

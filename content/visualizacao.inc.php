@@ -1,8 +1,16 @@
+<HTML>
+<head>
+    <?php include("head.inc.php"); ?>
+</head>
+<?php
+    include("../functions.php");
+?>
 <?php
 	$id_estado ='';
 	$pag = $_GET['pag'];
 	if (isset($_GET['id_estado']))
 		$id_estado = $_GET['id_estado'];
+
 ?>
 
 <div class='visualizacao_menu'>
