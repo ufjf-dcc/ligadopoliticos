@@ -508,8 +508,8 @@
 			}
 		}
 	
-		if($achou){
-		$objects = array();
+		if($achou){ echo "já foi inserido"; }
+		/*$objects = array();
 		        $results = json_decode($resposta);//descodifica o objeto json para um array
 			//pega o valor dentro de dois array
 			    foreach($results->results->bindings as $reg){
@@ -574,7 +574,7 @@
 		    	$resposta = curl_exec( $curl );
 
 		    	curl_close($curl);
-		}
+		}*/
 		else{
 			
 			$format = 'text/integer';

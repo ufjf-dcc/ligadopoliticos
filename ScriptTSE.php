@@ -22,7 +22,7 @@
             $arquivo = file('/var/www/html/ligadopoliticos/controlador.txt');
                 $t = (int)$arquivo[0];
                 $c = 0;
-                $url0="http://divulgacand2014.tse.jus.br".$estados[1];
+                $url0="http://divulgacand2014.tse.jus.br".$estados[6];
                 $html0= file_get_html($url0);
                 foreach($html0->find('div[class="col-md-4"]') as $button){// escolher entre governador, vice, senadors, dep federal e estadual
                     foreach($button->find('ul[class="dropdown-menu"]') as $dropdown){
