@@ -1,16 +1,11 @@
-<HTML>
-<head>
-    <?php include("head.inc.php"); ?>
-</head>
 <?php
-    include("../functions.php");
-?>
-<?php
+    include ("../functions.php");
+    include ("../config1.php");
+    include ("head.inc.php");
 	$id_estado ='';
 	$pag = $_GET['pag'];
 	if (isset($_GET['id_estado']))
 		$id_estado = $_GET['id_estado'];
-
 ?>
 
 <div class='visualizacao_menu'>
@@ -27,7 +22,7 @@
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=declaracao_bens&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio'><?php escreve("Declaração de Bens","Declaration of Assets") ?></a> |
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=lideranca&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio&ordem=nome+ASC'><?php escreve("Liderança","Leadership") ?></a> |
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=missao&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio&ordem=nome+ASC'><?php escreve("Missão","Mission") ?></a> |
-<!--	<a href='?pag=<?php echo $pag; ?>&id_grafico=ocorrencia&situacao=Em+Exercicio&ordem=nome+ASC'><php escreve("Ocorrência","Occurrency") ?></a> | -->
+<!--<a href='?pag=<?php echo $pag; ?>&id_grafico=ocorrencia&situacao=Em+Exercicio&ordem=nome+ASC'><php escreve("Ocorrência","Occurrency") ?></a> | -->
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=pronunciamento&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio&ordem=nome+ASC'><?php escreve("Pronunciamento","Speech") ?></a> |
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=proposicao&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio&ordem=nome+ASC'><?php escreve("Proposição","Bill") ?></a> |
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=nuvem_palavra_proposicao&id_estado=<?php echo $id_estado; ?>'><?php escreve("Nuvem de Palavra - Proposições","Word Cloud - Bills") ?></a> |
@@ -37,9 +32,10 @@
 <?php
 
 function geraGrafico($consulta,$grafico, $X1, $X2, $Y1,$Y2){
-	include("fusioncharts/FusionCharts.php");
+	include("../fusioncharts/FusionCharts.php");
 	$strXML = "<graph decimalPrecision='0' showNames='1' showPercentageInLabel='1' showPercentageValues='0' formatNumberScale='0' thousandSeparator='.' xAxisName= '" . retorna ($X1,$X2) . "' yAxisName='" . retorna ($Y1,$Y2) . "'>";
 	$tamanho = '500';
+    echo $consulta;
 	$result = mysql_query($consulta) or die(mysql_error());
 	$cont = mysql_num_rows($result);
 	if ($cont > 30)
@@ -56,20 +52,19 @@ function geraGrafico($consulta,$grafico, $X1, $X2, $Y1,$Y2){
 	$strXML .= "</graph>";
 	if ($grafico == '')
 		$grafico = "FCF_Bar2D";
-	echo renderChart("fusioncharts/".$grafico.".swf", "", $strXML, "", 720,$tamanho);
+	echo renderChart("../fusioncharts/".$grafico.".swf", "", $strXML, "", 720,$tamanho);
 }
 
 function geraVisualizacao ($select, $join, $group_by, $X1, $X2, $Y1, $Y2) 
 {
 	echo "<h2>"; escreve ($Y1,$Y2); echo " X "; escreve ($X1,$X2); echo "</h2>";
 	echo "<div style='float:right;'>";
-		include("content/form_filtro.inc.php");
+	include("form_filtro.inc.php");
 	echo "</div>";
 	echo "<div style='float:left;'>";
-		geraGrafico($consulta,$grafico, $X1, $X2, $Y1, $Y2); 
+    geraGrafico($consulta,$grafico, $X1, $X2, $Y1, $Y2);
 	echo "</div>";	
 	echo "<div style='clear:both;'>&nbsp;</div>";
-
 }
 
 $id_grafico = '';
@@ -79,7 +74,7 @@ if (isset($_GET['id_grafico']))
 switch ($id_grafico){
 
 	case 'cargo':
-	geraVisualizacao 
+	geraVisualizacao
 	(
 	"SELECT (p.cargo) AS nome, COUNT(*) AS valor FROM politico p",
 	"",

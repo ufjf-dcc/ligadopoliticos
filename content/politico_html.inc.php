@@ -11,11 +11,11 @@
 </head>
 <body>
 	<?php 
-                include("properties.php");
-                include("config.php");
+        include("properties.php");
+        include("config.php");
 		include("functions.php");
 		include("content/idioma.inc.php");
-                include ("consultasSPARQL.php");
+        include("consultasSPARQL.php");
 	?>
 
 <div id="tudo">

@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="http://localhost/ligadopoliticos/estilo.css" type="text/css" />
 <!--	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://ligadonospoliticos.com.br/content/foaf.rdf" /> -->
         <link rel="meta" type="application/rdf+xml" title="FOAF" href="http://localhost/ligadopoliticos/content/foaf.rdf" />
-	<script language="javascript" src="http://localhost/ligadopoliticos/fusioncharts/FusionCharts.js"></script>
+	<script language="javascript" src="http://ligadonospoliticos.com.br/fusioncharts/FusionCharts.js"></script>
 	<script language="javascript" type="text/javascript">
 		function visibilidadeCargo(){
 			if (document.formbusca.situacao.value == 'Em Exercicio' || document.formbusca.situacao.value == 'Fora de Exercicio')
