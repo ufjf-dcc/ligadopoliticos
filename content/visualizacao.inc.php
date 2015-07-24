@@ -1,6 +1,8 @@
 <?php
     include ("../functions.php");
-    include ("../config1.php");
+    //include ("../config1.php");
+    //include ("../config.php");
+    //include ("../consultasSPARQL.php");
     include ("head.inc.php");
 	$id_estado ='';
 	$pag = $_GET['pag'];
@@ -33,21 +35,27 @@
 
 function geraGrafico($consulta,$grafico, $X1, $X2, $Y1,$Y2){
 	include("../fusioncharts/FusionCharts.php");
+    include ("../properties.php");
+    include("../consultasSPARQL.php");
 	$strXML = "<graph decimalPrecision='0' showNames='1' showPercentageInLabel='1' showPercentageValues='0' formatNumberScale='0' thousandSeparator='.' xAxisName= '" . retorna ($X1,$X2) . "' yAxisName='" . retorna ($Y1,$Y2) . "'>";
 	$tamanho = '500';
-    echo $consulta;
-	$result = mysql_query($consulta) or die(mysql_error());
-	$cont = mysql_num_rows($result);
-	if ($cont > 30)
-		$tamanho = $cont * 15;
+    //echo $consulta;
+    $row1 = consultaSPARQL($consulta);
+	//$result = mysql_query($consulta) or die(mysql_error());
+	//$cont = mysql_num_rows($result);
+	$tamanho = 30 * 15;
 	$color = '';
 	if ($grafico == '' || $grafico == 'FCF_Bar2D' || $grafico == 'FCF_Area2D' || $grafico == 'FCF_Column2D' || $grafico == 'FCF_Column3D' || $grafico == 'FCF_Line')
 		$color = '9C9CDB';
-	if ($result) {
-		while($ors = mysql_fetch_array($result)) {
+	if ($row1) {
+        $i=0;
+        foreach ($row1 as $row) {
+            $strXML .="<set  color='". $color ."' name='" . $row['x'] . "' value='" . (int)$row['count'] . "'/>";
+        }
+		/*while($ors = mysql_fetch_array($result)) {
 			//if ($ors['nome'] <> '')
 				$strXML .= "<set  color='". $color ."' name='" . $ors['nome'] . "' value='" . $ors['valor'] . "'/>";  
-		}
+		}*/
 	}
 	$strXML .= "</graph>";
 	if ($grafico == '')
@@ -74,7 +82,7 @@ if (isset($_GET['id_grafico']))
 switch ($id_grafico){
 
 	case 'cargo':
-	geraVisualizacao
+	/*geraVisualizacao
 	(
 	"SELECT (p.cargo) AS nome, COUNT(*) AS valor FROM politico p",
 	"",
@@ -83,7 +91,28 @@ switch ($id_grafico){
 	"Office",
 	"Número de Políticos",
 	"Number of Politicians"
-	);
+	);*/
+    geraVisualizacao("select ?x (COUNT(?x) AS ?count)
+  WHERE
+  {
+       {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^Eleito \" , \"i\")
+         ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?x.
+       }
+      UNION
+      {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^2º turno\" , \"i\")
+         ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?x.
+      }
+
+  }",
+    "",
+    "GROUP BY ?x",
+        "Cargo",
+	"Office",
+	"Número de Políticos",
+	"Number of Politicians"
+    );
 	break;
 
 	case 'cargo_uf':

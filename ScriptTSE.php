@@ -22,13 +22,13 @@
             $arquivo = file('/var/www/html/ligadopoliticos/controlador.txt');
                 $t = (int)$arquivo[0];
                 $c = 0;
-                $url0="http://divulgacand2014.tse.jus.br".$estados[6];
+                $url0="http://divulgacand2014.tse.jus.br".$estados[27];
                 $html0= file_get_html($url0);
                 foreach($html0->find('div[class="col-md-4"]') as $button){// escolher entre governador, vice, senadors, dep federal e estadual
                     foreach($button->find('ul[class="dropdown-menu"]') as $dropdown){
                         $k=0;
                         foreach($dropdown->find('a') as $cat){
-                            if($k>0){
+                            if($k==0){
                                 $categoria[$k] = "http://divulgacand2014.tse.jus.br".$cat->href;
                                 //$html00 = file_get_html($categoria[$k]);
                                 $html00 = new simple_html_dom();

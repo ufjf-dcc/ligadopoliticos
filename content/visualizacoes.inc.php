@@ -1,6 +1,6 @@
 <h2><?php
     include ("../functions.php");
-    include ("../config1.php");
+    //include ("../config1.php");
     include ("head.inc.php");
     escreve("Visualizações","Visualizations") ?></h2>
 <br />	

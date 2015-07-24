@@ -21,7 +21,7 @@
                 $j=0;
                 foreach($dados->find('td') as $pesso){
                     $pessoais[$j]=$pesso;
-                    /*if($j == 0){
+                    if($j == 0){
                         $cargo_par = explode("|" , $pessoais[0]);
                         $cargo_parte = explode(" ", $cargo_par[0]);
                         $cargo = $cargo_parte[4];
@@ -29,9 +29,9 @@
                     else{
                         //echo $j."-" ;
                         //echo $pessoais[$j]."<br>";
-                    }*/
+                    }
                     $j++;
-                }/*
+                }
                 echo $pessoais[1]."-";
                 //$decisao = $pessoais[1];
                 $nome_parlamentar = $pessoais[1]->plaintext; $numero = $pessoais[2]->plaintext; 
@@ -49,17 +49,17 @@
                         $ocupacao, $grau_instrucao, $nacionalidade, $cidade_nascimento, 
                         $estado_nascimento, $cidade_eleitoral, $estado_eleitoral, $site, 
                         $email, $cargo, $cargo_uf, $partido, $situacao);
-*/
+
             }
 
-            /*
+
             //FOTO
             foreach($html2->find('img[class="pull-left foto-candidato"]') as $foto){
                 $link = "http://divulgacand2014.tse.jus.br".$foto->src;
                 //echo "<img src ='$link' height='150' width='120'>" . '<br>';
                 foto_politico($link, $resposta);
             }
-            */
+            /*
             //RASPAGEM DE DECLARACAO DE BENS
             $id = existepoliDecla($pessoais[3]->plaintext);
             echo "POLITICO:".$id."<br>";
