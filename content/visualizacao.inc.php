@@ -39,7 +39,7 @@ function geraGrafico($consulta,$grafico, $X1, $X2, $Y1,$Y2){
     include("../consultasSPARQL.php");
 	$strXML = "<graph decimalPrecision='0' showNames='1' showPercentageInLabel='1' showPercentageValues='0' formatNumberScale='0' thousandSeparator='.' xAxisName= '" . retorna ($X1,$X2) . "' yAxisName='" . retorna ($Y1,$Y2) . "'>";
 	$tamanho = '500';
-    //echo $consulta;
+    echo $consulta;
     $row1 = consultaSPARQL($consulta);
 	//$result = mysql_query($consulta) or die(mysql_error());
 	//$cont = mysql_num_rows($result);
@@ -50,6 +50,8 @@ function geraGrafico($consulta,$grafico, $X1, $X2, $Y1,$Y2){
 	if ($row1) {
         $i=0;
         foreach ($row1 as $row) {
+            if($row['x']=="MA")$row['x'] = "MARANHAO";
+            if($row['x']=="ZZ")$row['x'] = "NAO INFORMADO";
             $strXML .="<set  color='". $color ."' name='" . $row['x'] . "' value='" . (int)$row['count'] . "'/>";
         }
 		/*while($ors = mysql_fetch_array($result)) {
@@ -105,9 +107,9 @@ switch ($id_grafico){
          ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?x.
       }
 
-  }",
+  ",
     "",
-    "GROUP BY ?x",
+    " }GROUP BY ?x",
         "Cargo",
 	"Office",
 	"Número de Políticos",
@@ -118,9 +120,23 @@ switch ($id_grafico){
 	case 'cargo_uf':
 	geraVisualizacao 
 	(
-	"SELECT (p.cargo_uf) AS nome, COUNT(*) AS valor FROM politico p",
+	"select ?x (COUNT(?x) AS ?count)
+  WHERE
+  {
+       {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^Eleito \" , \"i\")
+         ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?p.
+       }
+      UNION
+      {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^2º turno\" , \"i\")
+         ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?p.
+      }
+
+      ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> ?x .
+",
 	"",
-	" GROUP BY p.cargo_uf ",
+	"} GROUP BY ?x ",
 	"Estado (Cargo)",
 	"State (Office)",
 	"Número de Políticos",

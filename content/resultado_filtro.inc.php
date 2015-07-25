@@ -65,7 +65,6 @@ if (isset($_GET['id_grafico']))
 	$id_grafico = $_GET['id_grafico'];
 	
 $consulta = $consulta.$select;
-
 $consulta = $consulta.$join;
 
 if (($situacao == 'Candidato Eleito') || ($situacao == 'Candidato Nao-Eleito') || ($situacao == 'Candidato') || ($nome <> '')){
@@ -73,7 +72,6 @@ if (($situacao == 'Candidato Eleito') || ($situacao == 'Candidato Nao-Eleito') |
 	//$consulta= $consulta.$consulta_eleicao;
 }
 
-//$consulta=$consulta." WHERE 1";
 
 if ($situacao == 'Candidato Eleito'){
 	$consulta_resultado = " AND e.resultado = 'Eleito'";
@@ -96,58 +94,58 @@ if ($nome <> ''){
 }
 
 if ($partido <> ''){
-	$consulta_partido = " AND p.partido = '$partido'";
-	//$consulta= $consulta.$consulta_partido;
+	$consulta_partido = " ?y <http://www.rdfabout.com/rdf/schema/politico/party> \"$partido\" .";
+	$consulta= $consulta.$consulta_partido;
 }
 
 if ($id_estado <> ''){
-	$consulta_estado = " AND p.cargo_uf = '$id_estado'";
-	//$consulta= $consulta.$consulta_estado;
+	$consulta_estado = "?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> \"$id_estado\" .";
+	$consulta= $consulta.$consulta_estado;
 }
 
 if ($cargo <> ''){
-	$consulta_cargo = " AND p.cargo = '$cargo'";
-	//$consulta= $consulta.$consulta_cargo;
+	$consulta_cargo = "?y <http://models.okkam.org/ENS-core-vocabulary#occupation> \"$cargo\" .";
+	$consulta= $consulta.$consulta_cargo;
 }
 
 if ($sexo <> ''){
-	$consulta_sexo = " AND p.sexo = '$sexo'";
-	//$consulta= $consulta.$consulta_sexo;
+	$consulta_sexo = " ?y <http://xmlns.com/foaf/0.1/gender> \"$sexo\" .";
+	$consulta= $consulta.$consulta_sexo;
 }
 
 if ($cor <> ''){
-	$consulta_cor = " AND p.cor = '$cor'";
-	//$consulta= $consulta.$consulta_cor;
+	$consulta_cor = " ?y <http://models.okkam.org/ENS-core-vocabulary#complexion> \"$cor\" .";
+	$consulta= $consulta.$consulta_cor;
 }
 
 if ($estado_civil <> ''){
-	$consulta_estado_civil = " AND p.estado_civil = '$estado_civil'";
-	//$consulta= $consulta.$consulta_estado_civil;
+	$consulta_estado_civil = " ?y <http://ligadonospoliticos.com.br/politicobr#maritalStatus> \"$estado_civil\" .";
+	$consulta= $consulta.$consulta_estado_civil;
 }
 
 if ($ocupacao <> ''){
-	$consulta_ocupacao = " AND p.ocupacao = '$ocupacao'";
-	//$consulta= $consulta.$consulta_ocupacao;
+	$consulta_ocupacao = " ?y <http://models.okkam.org/ENS-core-vocabulary#occupation> \"$ocupacao\" .";
+	$consulta= $consulta.$consulta_ocupacao;
 }
 
 if ($grau_instrucao <> ''){
-	$consulta_grau_instrucao = " AND p.grau_instrucao = '$grau_instrucao'";
-	//$consulta= $consulta.$consulta_grau_instrucao;
+	$consulta_grau_instrucao = " ?y <http://purl.org/dc/terms/educationLevel> \"$grau_instrucao\" .";
+	$consulta= $consulta.$consulta_grau_instrucao;
 }
 
 if ($nacionalidade <> ''){
-	$consulta_nacionalidade = " AND p.nacionalidade = '$nacionalidade'";
-	//$consulta= $consulta.$consulta_nacionalidade;
+	$consulta_nacionalidade = "?y <http://dbpedia.org/property/nationality> \"$nacionalidade\" .";
+	$consulta= $consulta.$consulta_nacionalidade;
 }
 
 if ($cidade_nascimento <> ''){
-	$consulta_cidade_nascimento = " AND p.cidade_nascimento LIKE '$cidade_nascimento'";
-	//$consulta= $consulta.$consulta_cidade_nascimento;
+	$consulta_cidade_nascimento = "?y <http://purl.org/ontomedia/ext/common/being#place-of-birth> \"$cidade_nascimento\" .";
+	$consulta= $consulta.$consulta_cidade_nascimento;
 }
 
 if ($estado_nascimento <> ''){
-	$consulta_estado_nascimento = " AND p.estado_nascimento = '$estado_nascimento'";
-	//$consulta= $consulta.$consulta_estado_nascimento;
+	$consulta_estado_nascimento = " ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> \"$estado_nascimento\" .";
+	$consulta= $consulta.$consulta_estado_nascimento;
 }
 
 if ($cidade_eleitoral <> ''){
@@ -160,12 +158,11 @@ if ($estado_eleitoral <> ''){
 	//$consulta= $consulta.$consulta_estado_eleitoral;
 }
 
-$consulta = $consulta.$group_by;
+    $consulta = $consulta.$group_by;
 
-if ($ordem == '') 
-	$ordem = 'valor desc';
-	
-//$consulta = $consulta." ORDER BY ".$ordem;
+    if($ordem = "nome ASC")$ordem = "";
+
+    $consulta = $consulta.$ordem;
 
 if ($id_grafico == 'ocupacao' || $id_grafico == 'declaracao_bens' || $id_grafico == 'cidade_nascimento'){
 	$limite1 = '0';
