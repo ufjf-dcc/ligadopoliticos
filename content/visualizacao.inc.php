@@ -1,8 +1,5 @@
 <?php
     include ("../functions.php");
-    //include ("../config1.php");
-    //include ("../config.php");
-    //include ("../consultasSPARQL.php");
     include ("head.inc.php");
 	$id_estado ='';
 	$pag = $_GET['pag'];
@@ -41,8 +38,6 @@ function geraGrafico($consulta,$grafico, $X1, $X2, $Y1,$Y2){
 	$tamanho = '500';
     echo $consulta;
     $row1 = consultaSPARQL($consulta);
-	//$result = mysql_query($consulta) or die(mysql_error());
-	//$cont = mysql_num_rows($result);
 	$tamanho = 30 * 15;
 	$color = '';
 	if ($grafico == '' || $grafico == 'FCF_Bar2D' || $grafico == 'FCF_Area2D' || $grafico == 'FCF_Column2D' || $grafico == 'FCF_Column3D' || $grafico == 'FCF_Line')
@@ -50,14 +45,15 @@ function geraGrafico($consulta,$grafico, $X1, $X2, $Y1,$Y2){
 	if ($row1) {
         $i=0;
         foreach ($row1 as $row) {
+            $i++;
+            echo $row['x'].$row['count']."-";
             if($row['x']=="MA")$row['x'] = "MARANHAO";
             if($row['x']=="ZZ")$row['x'] = "NAO INFORMADO";
+            $partido = explode(":",$row['x']);
+            if($partido[0]=="http")$row['x']="partido";
             $strXML .="<set  color='". $color ."' name='" . $row['x'] . "' value='" . (int)$row['count'] . "'/>";
         }
-		/*while($ors = mysql_fetch_array($result)) {
-			//if ($ors['nome'] <> '')
-				$strXML .= "<set  color='". $color ."' name='" . $ors['nome'] . "' value='" . $ors['valor'] . "'/>";  
-		}*/
+        if($i>=30)$tamanho = $tamanho * 2;
 	}
 	$strXML .= "</graph>";
 	if ($grafico == '')
@@ -84,29 +80,11 @@ if (isset($_GET['id_grafico']))
 switch ($id_grafico){
 
 	case 'cargo':
-	/*geraVisualizacao
-	(
-	"SELECT (p.cargo) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.cargo",
-	"Cargo",
-	"Office",
-	"Número de Políticos",
-	"Number of Politicians"
-	);*/
+
     geraVisualizacao("select ?x (COUNT(?x) AS ?count)
   WHERE
   {
-       {
-         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^Eleito \" , \"i\")
-         ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?x.
-       }
-      UNION
-      {
-         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^2º turno\" , \"i\")
-         ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?x.
-      }
-
+    ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?x.
   ",
     "",
     " }GROUP BY ?x",
@@ -123,17 +101,7 @@ switch ($id_grafico){
 	"select ?x (COUNT(?x) AS ?count)
   WHERE
   {
-       {
-         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^Eleito \" , \"i\")
-         ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?p.
-       }
-      UNION
-      {
-         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^2º turno\" , \"i\")
-         ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?p.
-      }
-
-      ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> ?x .
+        ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> ?x .
 ",
 	"",
 	"} GROUP BY ?x ",
@@ -147,9 +115,13 @@ switch ($id_grafico){
 	case 'partido':
 	geraVisualizacao 
 	(
-	"SELECT (p.partido) AS nome, COUNT(*) AS valor FROM politico p",
+	"select ?x (COUNT(?x) AS ?count)
+  WHERE
+  {
+    ?y <http://www.rdfabout.com/rdf/schema/politico/party> ?x
+    	",
 	"",
-	" GROUP BY p.partido",
+	"  }GROUP BY ?x",
 	"Partido",
 	"Party",
 	"Número de Políticos",
@@ -160,9 +132,13 @@ switch ($id_grafico){
 	case 'grau_instrucao':
 	geraVisualizacao 
 	(
-	"SELECT (p.grau_instrucao) AS nome, COUNT(*) AS valor FROM politico p",
+	"select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://purl.org/dc/terms/educationLevel> ?x
+    	",
 	"",
-	" GROUP BY p.grau_instrucao",
+	" }GROUP BY ?x",
 	"Grau de Instrução",
 	"Education Level",
 	"Número de Políticos",
@@ -173,9 +149,13 @@ switch ($id_grafico){
 	case 'sexo':
 	geraVisualizacao 
 	(
-	"SELECT (p.sexo) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.sexo",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://xmlns.com/foaf/0.1/gender> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Sexo",
 	"Gender",
 	"Número de Políticos",
@@ -186,9 +166,13 @@ switch ($id_grafico){
 	case 'ocupacao':
 	geraVisualizacao 
 	(
-	"SELECT (p.ocupacao) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.ocupacao",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://models.okkam.org/ENS-core-vocabulary#occupation> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Ocupação",
 	"Occupation",
 	"Número de Políticos",
@@ -199,9 +183,13 @@ switch ($id_grafico){
 	case 'nacionalidade':
 	geraVisualizacao 
 	(
-	"SELECT (p.nacionalidade) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.nacionalidade",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://dbpedia.org/property/nationality> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Nacionalidade",
 	"Nacionality",
 	"Número de Políticos",
@@ -212,9 +200,13 @@ switch ($id_grafico){
 	case 'cidade_nascimento':
 	geraVisualizacao 
 	(
-	"SELECT (p.cidade_nascimento) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.cidade_nascimento",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://purl.org/ontomedia/ext/common/being#place-of-birth> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Cidade de Nascimento",
 	"City of Birth",
 	"Número de Políticos",
@@ -225,9 +217,13 @@ switch ($id_grafico){
 	case 'estado_nascimento':
 	geraVisualizacao 
 	(
-	"SELECT (p.estado_nascimento) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.estado_nascimento",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Estado de Nascimento",
 	"State of Birth",
 	"Número de Políticos",

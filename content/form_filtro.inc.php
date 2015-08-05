@@ -8,16 +8,12 @@
 	<input type="hidden" name="id_grafico" value= "<?php echo $_GET['id_grafico']; ?>" />
 	<?php escreve("Situação:","Status:"); ?>
 	<br />
-	<select name="situacao" class="filtro"> 
-		<option value="" /> 
-		<option value="Em Exercicio"> <?php escreve("Em Exercício","In Office"); ?> </option>
-		<option value="Fora de Exercicio"> <?php escreve("Fora de Exercício","Out of Office"); ?> </option>
-		<option value="Candidato"> <?php escreve("Candidato","Candidate"); ?> </option>
-		<option value="Candidato Eleito"> <?php escreve("Candidato Eleito","Elected Candidate"); ?> </option>
-		<option value="Candidato Nao-Eleito"> <?php escreve("Candidato Não-Eleito","Non-Elected Candidate"); ?> </option>
-	</select>
-	
-	<br />
+    <select name="situacao" class="filtro">
+        <option value="" />
+        <option value="Em Exercicio"> <?php escreve("Eleito","In Office"); ?> </option>
+        <option value="Fora de Exercicio"> <?php escreve("Não-Eleito","Out of Office"); ?> </option>
+        </select>
+    <br />
 	<?php escreve("Cargo:","Office:"); ?>
 	<br />
 	<select name="cargo" class="filtro"> 
@@ -115,44 +111,6 @@
 		<option value="FEMININO"><?php escreve("FEMININO","Female"); ?></option>
 	</select>
 
-	<br />
-	<?php escreve("Cidade de Nascimento:","City of birth:"); ?>
-	<br />
-	<input type="text" name="cidade_nascimento" class="filtro" value="<?php echo $cidade_nascimento; ?>" />
-	
-	<br />
-	<?php escreve("Estado de Nascimento:","State of birth:"); ?>
-	<br />
-	<select name="estado_nascimento" class="filtro"> 
-		<option value="" />
-        <option value="ACRE"> ACRE </option>
-        <option value="ALAGOAS"> ALAGOAS </option>
-        <option value="AMAZONAS"> AMAZONAS </option>
-        <option value="AMAPA"> AMAPA </option>
-        <option value="BAHIA"> BAHIA </option>
-        <option value="CEARA"> CEARA </option>
-        <option value="DISTRITO FEDERAL"> DISTRITO FEDERAL </option>
-        <option value="ESPIRITO SANTO"> ESPIRITO SANTO </option>
-        <option value="GOIAS"> GOIAS </option>
-        <option value="MARANHAO"> MARANHAO </option>
-        <option value="MINAS GERAIS"> MINAS GERAIS </option>
-        <option value="MATO GROSSO DO SUL"> MATO GROSSO DO SUL </option>
-        <option value="MATO GROSSO"> MATO GROSSO </option>
-        <option value="PARA"> PARA </option>
-        <option value="PARAIBA"> PARAIBA </option>
-        <option value="PERNAMBUCO"> PERNAMBUCO </option>
-        <option value="PIAUI"> PIAUI </option>
-        <option value="PARANA"> PARANA </option>
-        <option value="RIO DE JANEIRO"> RIO DE JANEIRO </option>
-        <option value="RIO GRANDE DO NORTE"> RIO GRANDE DO NORTE </option>
-        <option value="RONDONIA"> RONDONIA </option>
-        <option value="RORAIMA"> RORAIMA </option>
-        <option value="RIO GRANDE DO SUL"> RIO GRANDE DO SUL </option>
-        <option value="SANTA CATARINA"> SANTA CATARINA </option>
-        <option value="SERGIPE"> SERGIPE </option>
-        <option value="SAO PAULO"> SAO PAULO </option>
-        <option value="TOCANTINS"> TOCANTINS </option>
-	</select>
 
 	<br />
 	<?php escreve("Gráfico:","Chart:"); ?>
@@ -181,11 +139,7 @@
 	</select>
 
 	<br />
-	<?php escreve("Limite:","Limit:"); ?>
 	<br />
-	<input type="text" name="limite1" style="width:55px;" align="center" value="<?php echo $limite1; ?>" />	-
-	<input type="text" name="limite2" style="width:55;" align="center" value="<?php echo $limite2; ?>" /> 
-	<br /><br />
 	<input type="submit" value="OK" />
 </form>
 

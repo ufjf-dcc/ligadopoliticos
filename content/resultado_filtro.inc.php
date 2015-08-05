@@ -67,26 +67,54 @@ if (isset($_GET['id_grafico']))
 $consulta = $consulta.$select;
 $consulta = $consulta.$join;
 
-if (($situacao == 'Candidato Eleito') || ($situacao == 'Candidato Nao-Eleito') || ($situacao == 'Candidato') || ($nome <> '')){
-	$consulta_eleicao = " JOIN eleicao e ON p.id_politico=e.id_politico";
-	//$consulta= $consulta.$consulta_eleicao;
+
+if ($situacao == 'Em Exercicio' ){
+	$consulta_situacao =
+        "
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^Eleito \" , \"i\")
+        }
+        UNION
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"^2º turno\" , \"i\")
+        }
+        UNION
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Eleito por média\" , \"i\")
+        }UNION
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Eleito por QP\" , \"i\")
+        }";
+
+	$consulta= $consulta.$consulta_situacao;
 }
 
+    if ($situacao == "Fora de Exercicio" ){
+        $consulta_situacao =
+            "
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Não Eleito\" , \"i\")
+        }
+        UNION
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Suplente\" , \"i\")
+        }
+        UNION
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Indeferido\" , \"i\")
+        }UNION
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Renúncia\" , \"i\")
+        }UNION
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Não conhecimento do pedido\" , \"i\")
+        }UNION
+        {
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Falecido\" , \"i\")
+        }";
 
-if ($situacao == 'Candidato Eleito'){
-	$consulta_resultado = " AND e.resultado = 'Eleito'";
-	//$consulta= $consulta.$consulta_resultado;
-}
-
-if ($situacao == 'Candidato Nao-Eleito'){
-	$consulta_resultado = " AND e.resultado <> 'Eleito'";
-	//$consulta= $consulta.$consulta_resultado;
-}
-
-if ($situacao == 'Em Exercicio' || $situacao == 'Fora de Exercicio' || $situacao == 'Candidato'){
-	$consulta_situacao = " AND p.situacao = '$situacao'";
-	//$consulta= $consulta.$consulta_situacao;
-}
+        $consulta= $consulta.$consulta_situacao;
+    }
 
 if ($nome <> ''){
 	$consulta_nome = " AND p.nome_civil LIKE '%$nome%' OR p.nome_parlamentar LIKE '%$nome%' OR e.nome_urna LIKE '%$nome%'";
