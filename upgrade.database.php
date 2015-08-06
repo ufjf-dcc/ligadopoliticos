@@ -1652,7 +1652,46 @@
 		
 	}
 
-	
+	function politicoTeste($nome_civil, $data_nascimento, $cargo){
+        $id_politico = existePoli($nome_civil, $data_nascimento);
+        $id = $id_politico;
+        $politico = "<http://ligadonospoliticos.com.br/politico/$id_politico>";
+
+        $format = 'application/sparql-results+xml';
+
+        //deletando dados para inserir dados novos
+        $endereco = "
+					DELETE DATA{ $politico pol:Office \"Deputado\" };
+
+				";
+        $url = urlencode($endereco);
+        $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);
+        curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST"); // Delete precisa ser feito por POSTcurl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+        curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
+        $resposta = curl_exec( $curl );
+        curl_close($curl);
+
+
+        $endereco = "insert data{
+            $politico  pol:Office \"$cargo\"  }";
+        $url = urlencode($endereco);
+        $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);
+        curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+        curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
+        $resposta = curl_exec( $curl );
+        curl_close($curl);
+        return $id;
+
+    }
 	
 	function politico($nome_civil, $nome_parlamentar, $nome_pai, $nome_mae, $foto, $sexo, $cor, $data_nascimento, $estado_civil, $ocupacao, $grau_instrucao, $nacionalidade, $cidade_nascimento, $estado_nascimento, $cidade_eleitoral, $estado_eleitoral, $site, $email, $cargo, $cargo_uf, $partido, $situacao){
 
@@ -1680,7 +1719,7 @@
 					 OPTIONAL { $politico dcterms:educationLevel ?grau_instrucao }
 					 OPTIONAL { $politico dbpprop:nationality ?nacionalidade }
 					 OPTIONAL { $politico polbr:state-of-birth ?estado_nascimento }
-                                         OPTIONAL { $politico polbr:place-of-birth ?cidade_nascimento }
+            OPTIONAL { $politico polbr:place-of-birth ?cidade_nascimento }
 					 OPTIONAL { $politico foaf:homepage ?site }
 					 OPTIONAL { $politico biblio:Email ?email }
 					 OPTIONAL { $politico pol:Office ?cargo }
