@@ -1,4 +1,6 @@
 <?php
+    include ("../functions.php");
+    include ("head.inc.php");
 	$id_estado ='';
 	$pag = $_GET['pag'];
 	if (isset($_GET['id_estado']))
@@ -19,7 +21,7 @@
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=declaracao_bens&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio'><?php escreve("Declaração de Bens","Declaration of Assets") ?></a> |
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=lideranca&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio&ordem=nome+ASC'><?php escreve("Liderança","Leadership") ?></a> |
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=missao&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio&ordem=nome+ASC'><?php escreve("Missão","Mission") ?></a> |
-<!--	<a href='?pag=<?php echo $pag; ?>&id_grafico=ocorrencia&situacao=Em+Exercicio&ordem=nome+ASC'><php escreve("Ocorrência","Occurrency") ?></a> | -->
+<!--<a href='?pag=<?php echo $pag; ?>&id_grafico=ocorrencia&situacao=Em+Exercicio&ordem=nome+ASC'><php escreve("Ocorrência","Occurrency") ?></a> | -->
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=pronunciamento&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio&ordem=nome+ASC'><?php escreve("Pronunciamento","Speech") ?></a> |
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=proposicao&id_estado=<?php echo $id_estado; ?>&situacao=Em+Exercicio&ordem=nome+ASC'><?php escreve("Proposição","Bill") ?></a> |
 	<a href='?pag=<?php echo $pag; ?>&id_grafico=nuvem_palavra_proposicao&id_estado=<?php echo $id_estado; ?>'><?php escreve("Nuvem de Palavra - Proposições","Word Cloud - Bills") ?></a> |
@@ -29,39 +31,46 @@
 <?php
 
 function geraGrafico($consulta,$grafico, $X1, $X2, $Y1,$Y2){
-	include("fusioncharts/FusionCharts.php");
+	include("../fusioncharts/FusionCharts.php");
+    include ("../properties.php");
+    include("../consultasSPARQL.php");
 	$strXML = "<graph decimalPrecision='0' showNames='1' showPercentageInLabel='1' showPercentageValues='0' formatNumberScale='0' thousandSeparator='.' xAxisName= '" . retorna ($X1,$X2) . "' yAxisName='" . retorna ($Y1,$Y2) . "'>";
 	$tamanho = '500';
-	$result = mysql_query($consulta) or die(mysql_error());
-	$cont = mysql_num_rows($result);
-	if ($cont > 30)
-		$tamanho = $cont * 15;
+    echo $consulta;
+    $row1 = consultaSPARQL($consulta);
+	$tamanho = 30 * 15;
 	$color = '';
 	if ($grafico == '' || $grafico == 'FCF_Bar2D' || $grafico == 'FCF_Area2D' || $grafico == 'FCF_Column2D' || $grafico == 'FCF_Column3D' || $grafico == 'FCF_Line')
 		$color = '9C9CDB';
-	if ($result) {
-		while($ors = mysql_fetch_array($result)) {
-			//if ($ors['nome'] <> '')
-				$strXML .= "<set  color='". $color ."' name='" . $ors['nome'] . "' value='" . $ors['valor'] . "'/>";  
-		}
+	if ($row1) {
+        $i=0;
+        foreach ($row1 as $row) {
+            $i++;
+            echo $row['x'].$row['count']."-";
+            if($row['x']=="MA")$row['x'] = "MARANHAO";
+            if($row['x']=="ZZ")$row['x'] = "NAO INFORMADO";
+            $partido = explode(":",$row['x']);
+            if($partido[0]=="http")$row['x']="partido";
+            $strXML .="<set  color='". $color ."' name='" . $row['x'] . "' value='" . (int)$row['count'] . "'/>";
+        }
+        if($i>=30)$tamanho = $tamanho * 2;
 	}
 	$strXML .= "</graph>";
 	if ($grafico == '')
 		$grafico = "FCF_Bar2D";
-	echo renderChart("fusioncharts/".$grafico.".swf", "", $strXML, "", 720,$tamanho);
+	echo renderChart("../fusioncharts/".$grafico.".swf", "", $strXML, "", 720,$tamanho);
 }
 
 function geraVisualizacao ($select, $join, $group_by, $X1, $X2, $Y1, $Y2) 
 {
 	echo "<h2>"; escreve ($Y1,$Y2); echo " X "; escreve ($X1,$X2); echo "</h2>";
 	echo "<div style='float:right;'>";
-		include("content/form_filtro.inc.php");
+	include("form_filtro.inc.php");
 	echo "</div>";
 	echo "<div style='float:left;'>";
-		geraGrafico($consulta,$grafico, $X1, $X2, $Y1, $Y2); 
+    geraGrafico($consulta,$grafico, $X1, $X2, $Y1, $Y2);
 	echo "</div>";	
 	echo "<div style='clear:both;'>&nbsp;</div>";
-
 }
 
 $id_grafico = '';
@@ -71,24 +80,31 @@ if (isset($_GET['id_grafico']))
 switch ($id_grafico){
 
 	case 'cargo':
-	geraVisualizacao 
-	(
-	"SELECT (p.cargo) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.cargo",
-	"Cargo",
+
+    geraVisualizacao("select ?x (COUNT(?x) AS ?count)
+  WHERE
+  {
+    ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?x.
+  ",
+    "",
+    " }GROUP BY ?x",
+        "Cargo",
 	"Office",
 	"Número de Políticos",
 	"Number of Politicians"
-	);
+    );
 	break;
 
 	case 'cargo_uf':
 	geraVisualizacao 
 	(
-	"SELECT (p.cargo_uf) AS nome, COUNT(*) AS valor FROM politico p",
+	"select ?x (COUNT(?x) AS ?count)
+  WHERE
+  {
+        ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> ?x .
+",
 	"",
-	" GROUP BY p.cargo_uf ",
+	"} GROUP BY ?x ",
 	"Estado (Cargo)",
 	"State (Office)",
 	"Número de Políticos",
@@ -99,9 +115,13 @@ switch ($id_grafico){
 	case 'partido':
 	geraVisualizacao 
 	(
-	"SELECT (p.partido) AS nome, COUNT(*) AS valor FROM politico p",
+	"select ?x (COUNT(?x) AS ?count)
+  WHERE
+  {
+    ?y <http://www.rdfabout.com/rdf/schema/politico/party> ?x
+    	",
 	"",
-	" GROUP BY p.partido",
+	"  }GROUP BY ?x",
 	"Partido",
 	"Party",
 	"Número de Políticos",
@@ -112,9 +132,13 @@ switch ($id_grafico){
 	case 'grau_instrucao':
 	geraVisualizacao 
 	(
-	"SELECT (p.grau_instrucao) AS nome, COUNT(*) AS valor FROM politico p",
+	"select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://purl.org/dc/terms/educationLevel> ?x
+    	",
 	"",
-	" GROUP BY p.grau_instrucao",
+	" }GROUP BY ?x",
 	"Grau de Instrução",
 	"Education Level",
 	"Número de Políticos",
@@ -125,9 +149,13 @@ switch ($id_grafico){
 	case 'sexo':
 	geraVisualizacao 
 	(
-	"SELECT (p.sexo) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.sexo",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://xmlns.com/foaf/0.1/gender> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Sexo",
 	"Gender",
 	"Número de Políticos",
@@ -138,9 +166,13 @@ switch ($id_grafico){
 	case 'ocupacao':
 	geraVisualizacao 
 	(
-	"SELECT (p.ocupacao) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.ocupacao",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://models.okkam.org/ENS-core-vocabulary#occupation> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Ocupação",
 	"Occupation",
 	"Número de Políticos",
@@ -151,9 +183,13 @@ switch ($id_grafico){
 	case 'nacionalidade':
 	geraVisualizacao 
 	(
-	"SELECT (p.nacionalidade) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.nacionalidade",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://dbpedia.org/property/nationality> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Nacionalidade",
 	"Nacionality",
 	"Número de Políticos",
@@ -164,9 +200,13 @@ switch ($id_grafico){
 	case 'cidade_nascimento':
 	geraVisualizacao 
 	(
-	"SELECT (p.cidade_nascimento) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.cidade_nascimento",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://purl.org/ontomedia/ext/common/being#place-of-birth> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Cidade de Nascimento",
 	"City of Birth",
 	"Número de Políticos",
@@ -177,9 +217,13 @@ switch ($id_grafico){
 	case 'estado_nascimento':
 	geraVisualizacao 
 	(
-	"SELECT (p.estado_nascimento) AS nome, COUNT(*) AS valor FROM politico p",
-	"",
-	" GROUP BY p.estado_nascimento",
+        "select ?x (COUNT(?x) AS ?count)
+        WHERE
+        {
+            ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> ?x
+    	",
+        "",
+        " }GROUP BY ?x",
 	"Estado de Nascimento",
 	"State of Birth",
 	"Número de Políticos",

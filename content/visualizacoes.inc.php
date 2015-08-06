@@ -1,8 +1,12 @@
-<h2><?php escreve("Visualizações","Visualizations") ?></h2>
+<h2><?php
+    include ("../functions.php");
+    //include ("../config1.php");
+    include ("head.inc.php");
+    escreve("Visualizações","Visualizations") ?></h2>
 <br />	
   <div class="visualizacoes">
-	  <a href='?pag=visualizacao&id_grafico=cargo&situacao=Em+Exercicio'>
-      <img src = "images/visualizacoes/cargo.png" border=0 width="160px" height="100px" /><br />
+	  <a href='../content/visualizacao.inc.php?&id_grafico=cargo&situacao=Em+Exercicio'>
+      <img src = "http://localhost/ligadopoliticos/images/visualizacoes/cargo.png" border=0 width="160px" height="100px" /><br />
       <?php escreve("Cargo","Office") ?>
 	  </a>
 	</div>

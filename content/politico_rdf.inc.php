@@ -13,11 +13,7 @@ header ("content-type: application/rdf+xml");
 $site = 'http://ligadonospoliticos.com.br';
 $recurso = $_SERVER ['REQUEST_URI'];
 $parte_endereco = explode('/',$recurso);
-$tamanho = count($parte_endereco);
-$id_politico = $parte_endereco[$tamanho-3];
-//$id_politico = $parte_endereco[3];
-$id_politico = 1;
-
+$id_politico = $parte_endereco[3];
 echo '<?xml version="1.0"?>'; 
 echo '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
 			   xmlns:rdfs="http://www.w3.org/2000/01-rdf-schema#"

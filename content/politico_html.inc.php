@@ -5,17 +5,17 @@
 	<meta name="description" content="">
 	<meta name="keywords" content="pol�ticos brasileiros dados governamentais abertos governo eletronico transparencia dados ligados web semantica">
 	<meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
-	<link rel="stylesheet" href="http://ligadonospoliticos.com.br/estilo.css" type="text/css" />
-	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://ligadonospoliticos.com.br/content/foaf.rdf" /> 
+	<link rel="stylesheet" href="http://localhost/ligadopoliticos/estilo.css" type="text/css" />
+	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://localhost/ligadopoliticos/content/foaf.rdf" /> 
 	<script language="javascript" src="http://ligadonospoliticos.com.br/fusioncharts/FusionCharts.js"></script>
 </head>
 <body>
 	<?php 
-                include("../../../properties.php");
-                include("../../../consultasSPARQL.php");
-                include("../../../config.php");
-		include("../../../functions.php");
-		include("../../../content/idioma.inc.php");
+        include("properties.php");
+        include("config.php");
+		include("functions.php");
+		include("content/idioma.inc.php");
+        include("consultasSPARQL.php");
 	?>
 
 <div id="tudo">
@@ -28,24 +28,16 @@
 		<div id="navegacao">
 			<div id="conteudo">
 				<?php
-                                
-				include_once("../../../sparql/ARC2.php");
-				
 				$endereco = $_SERVER ['REQUEST_URI'];
-				$parte_endereco = explode('/',$endereco);
-                                //tamanho fica igual a 6 pois possui uma barra no final e pega um espaço em branco depois da barra
-                                $tamanho = count($parte_endereco);
-				$recurso = $parte_endereco[$tamanho-3];
-                                
+                                $parte_endereco = explode ('/', $endereco);
+                                $recurso = $parte_endereco[3];
 				include("politico_html_dados_pessoais.inc.php");
-
 				$url_facebook = $_SERVER['SERVER_NAME'].$_SERVER ['REQUEST_URI'];
-				echo 
 				'
 				    <meta property="og:title" content="'.$nome_civil.'"/>
 				    <meta property="og:type" content="politician"/>
 				    <meta property="og:url" content="http://'.$url_facebook.'"/>
-				    <meta property="og:image" content="http://ligadonospoliticos.com.br/'.$foto.'"/>
+				    <meta property="og:image" content="http://ligadonospoliticos.com.br/'.$recurso.'"/>
 				';
 
 				echo "<div style='clear:both;'> &nbsp; </div>";
@@ -54,19 +46,36 @@
 
 				aba_politico_html('No Facebook');
                                 
-				$sparql2 = consultaSPARQL(' select ?tipo ?descricao ?valor 
+				$sparql2a = consultaSPARQL(' select ?tipo ?descricao ?valor
                                 where{
                                   <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:declarationOfAssets ?x.
+                                  ?x timeline:atYear "2010".
                                   ?x polbr:DeclarationOfAssets ?y.
                                   ?y dcterms:description ?descricao.
                                   ?y dcterms:type ?tipo.
-                                  ?y rdfmoney:Price ?valor
+                                  ?y rdfmoney:Price ?valor.
                                   }');
-                                $cont_declaracao_bens = count($sparql2); 
-                                if ($cont_declaracao_bens > 0){	
+                                $cont_declaracao_bens_a = count($sparql2a);
+                //
+                if ($cont_declaracao_bens_a > 0){
 					aba_politico_html('Declaração de Bens');	
 				}
-				
+
+                $sparql2b = consultaSPARQL(' select ?tipo ?descricao ?valor
+                                where{
+                                  <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:declarationOfAssets ?x.
+                                  ?x timeline:atYear "2014".
+                                  ?x polbr:DeclarationOfAssets ?y.
+                                  ?y dcterms:description ?descricao.
+                                  OPTIONAL{ ?y dcterms:type ?tipo.}
+                                  ?y rdfmoney:Price ?valor.
+                                  }');
+                $cont_declaracao_bens_b = count($sparql2b);
+
+                if ($cont_declaracao_bens_a == 0 && $cont_declaracao_bens_b > 0 ){
+                    aba_politico_html('Declaração de Bens');
+                }
+
 				$sparql6 = consultaSPARQL(' SELECT ?anexo ?ala ?gabinete ?email ?telefone ?fax
                                 WHERE	{
                                         <http://ligadonospoliticos.com.br/politico/'.$recurso.'> vcard:adr ?x
@@ -257,7 +266,7 @@
                                 //
                                 //
                                 
-				echo "<a href='http://ligadonospoliticos.com.br/politico/$recurso/rdf' style='decoration:none;'><img src='../../../images/rdf_icon.gif' border=0 height='18px' /></a>";				
+				echo "<a href='../../../ligadopoliticos/politico/$recurso/rdf' style='decoration:none;'><img src='../../images/rdf_icon.gif' border=0 height='18px' /></a>";				
 				
 				function aba_politico_html($valor)
 				{
@@ -283,7 +292,7 @@
 				?>
 			</div>
 		</div>
-		<? include("../../../content/base.inc.php"); ?>  
+		<?php include("base.inc.php"); ?>  
 	</div>
 </body>
 	

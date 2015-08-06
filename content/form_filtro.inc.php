@@ -8,16 +8,12 @@
 	<input type="hidden" name="id_grafico" value= "<?php echo $_GET['id_grafico']; ?>" />
 	<?php escreve("Situação:","Status:"); ?>
 	<br />
-	<select name="situacao" class="filtro"> 
-		<option value="" /> 
-		<option value="Em Exercicio"> <?php escreve("Em Exercício","In Office"); ?> </option>
-		<option value="Fora de Exercicio"> <?php escreve("Fora de Exercício","Out of Office"); ?> </option>
-		<option value="Candidato"> <?php escreve("Candidato","Candidate"); ?> </option>
-		<option value="Candidato Eleito"> <?php escreve("Candidato Eleito","Elected Candidate"); ?> </option>
-		<option value="Candidato Nao-Eleito"> <?php escreve("Candidato Não-Eleito","Non-Elected Candidate"); ?> </option>
-	</select>
-	
-	<br />
+    <select name="situacao" class="filtro">
+        <option value="" />
+        <option value="Em Exercicio"> <?php escreve("Eleito","In Office"); ?> </option>
+        <option value="Fora de Exercicio"> <?php escreve("Não-Eleito","Out of Office"); ?> </option>
+        </select>
+    <br />
 	<?php escreve("Cargo:","Office:"); ?>
 	<br />
 	<select name="cargo" class="filtro"> 
@@ -27,8 +23,8 @@
 		<option value="Governador"> <?php escreve("Governador","Governor"); ?>  </option>
 		<option value="Vice-Governador"> <?php escreve("Vice-Governador","Vice Governor"); ?>  </option>
 		<option value="Senador"> <?php escreve("Senador","Senator"); ?>  </option>
-		<option value="1º Suplente Senador"> <?php escreve("1º Suplente Senador","1st Alternate Senator"); ?> </option>
-		<option value="2º Suplente Senador"> <?php escreve("2º Suplente Senador","2nd Alternate Senator"); ?> </option>
+		<option value="Senador 1º Suplente"> <?php escreve("1º Suplente Senador","1st Alternate Senator"); ?> </option>
+		<option value="Senador2º Suplente"> <?php escreve("2º Suplente Senador","2nd Alternate Senator"); ?> </option>
 		<option value="Deputado Federal"> <?php escreve("Deputado Federal","Congressman"); ?> </option>
 		<option value="Deputado Estadual"> <?php escreve("Deputado Estadual","State Representative"); ?> </option>
 		<option value="Deputado Distrital"> <?php escreve("Deputado Distrital","District Representative"); ?> </option>
@@ -38,34 +34,34 @@
 	<?php escreve("Estado:","State:"); ?>
 	<br />
 	<select name="id_estado" class="filtro"> 
-		<option value="" /> 
-		<option value="AC"> Amazonas </option>
-		<option value="AL"> Alagoas </option>
-		<option value="AM"> Amazonas </option>
-		<option value="AP"> Amapá </option>
-		<option value="BA"> Bahia </option>
-		<option value="CE"> Ceará </option>
-		<option value="DF"> Distrito Federal </option>
-		<option value="ES"> Espírito Santo </option>
-		<option value="GO"> Goiás </option>
-		<option value="MA"> Maranhão </option>
-		<option value="MG"> Minas Gerais </option>
-		<option value="MS"> Mato Grosso do Sul </option>
-		<option value="MT"> Mato Grosso </option>
-		<option value="PA"> Pará </option>
-		<option value="PB"> Paraíba </option>
-		<option value="PE"> Pernambuco </option>
-		<option value="PI"> Piauí </option>
-		<option value="PR"> Paraná </option>
-		<option value="RJ"> Rio de Janeiro </option>
-		<option value="RN"> Rio Grande do Norte </option>
-		<option value="RO"> Rondônia </option>
-		<option value="RR"> Roraima </option>
-		<option value="RS"> Rio Grande do Sul </option>
-		<option value="SC"> Santa Catarina </option>
-		<option value="SE"> Sergipe </option>
-		<option value="SP"> São Paulo </option>
-		<option value="TO"> Tocantins </option>
+		<option value="" />
+		<option value="ACRE"> ACRE </option>
+		<option value="ALAGOAS"> ALAGOAS </option>
+		<option value="AMAZONAS"> AMAZONAS </option>
+		<option value="AMAPA"> AMAPA </option>
+		<option value="BAHIA"> BAHIA </option>
+		<option value="CEARA"> CEARA </option>
+		<option value="DISTRITO FEDERAL"> DISTRITO FEDERAL </option>
+		<option value="ESPIRITO SANTO"> ESPIRITO SANTO </option>
+		<option value="GOIAS"> GOIAS </option>
+		<option value="MARANHAO"> MARANHAO </option>
+		<option value="MINAS GERAIS"> MINAS GERAIS </option>
+		<option value="MATO GROSSO DO SUL"> MATO GROSSO DO SUL </option>
+		<option value="MATO GROSSO"> MATO GROSSO </option>
+		<option value="PARA"> PARA </option>
+		<option value="PARAIBA"> PARAIBA </option>
+		<option value="PERNAMBUCO"> PERNAMBUCO </option>
+		<option value="PIAUI"> PIAUI </option>
+		<option value="PARANA"> PARANA </option>
+		<option value="RIO DE JANEIRO"> RIO DE JANEIRO </option>
+		<option value="RIO GRANDE DO NORTE"> RIO GRANDE DO NORTE </option>
+		<option value="RONDONIA"> RONDONIA </option>
+		<option value="RORAIMA"> RORAIMA </option>
+		<option value="RIO GRANDE DO SUL"> RIO GRANDE DO SUL </option>
+		<option value="SANTA CATARINA"> SANTA CATARINA </option>
+		<option value="SERGIPE"> SERGIPE </option>
+		<option value="SAO PAULO"> SAO PAULO </option>
+		<option value="TOCANTINS"> TOCANTINS </option>
 	</select>
 
 	<br />
@@ -73,36 +69,36 @@
 	<br />
 	<select name="partido" class="filtro"> 
 		<option value="" /> 
-		<option value="DEM">DEM</option>
-		<option value="PAN">PAN</option>
-		<option value="PC do B">PC do B</option>
-		<option value="PCB">PCB</option>
-		<option value="PCO">PCO</option>
-		<option value="PDT">PDT</option>
-		<option value="PHS">PHS</option>
-		<option value="PMDB">PMDB</option>
-		<option value="PMN">PMN</option>
-		<option value="PP">PP</option>
-		<option value="PPB">PPB</option>
-		<option value="PPS">PPS</option>
-		<option value="PR">PR</option>
-		<option value="PRB">PRB</option>
-		<option value="PRP">PRP</option>
-		<option value="PRTB">PRTB</option>
-		<option value="PSB">PSB</option>
-		<option value="PSC">PSC</option>
-		<option value="PSDB">PSDB</option>
-		<option value="PSDC">PSDC</option>
-		<option value="PSL">PSL</option>
-		<option value="PSOL">PSOL</option>
-		<option value="PST">PST</option>
-		<option value="PSTU">PSTU</option>
-		<option value="PT">PT</option>
-		<option value="PT do B">PT do B</option>
-		<option value="PTB">PTB</option>
-		<option value="PTC">PTC</option>
-		<option value="PTN">PTN</option>
-		<option value="PV">PV</option>
+		<option value="Democratas">DEM</option>
+		<option value="Partido dos Aposentados da Nação">PAN</option>
+		<option value="Partido Comunista do Brasil">PC do B</option>
+		<option value="Partido Comunista Brasileiro">PCB</option>
+		<option value="Partido da Causa Operária">PCO</option>
+		<option value="Partido Democrático Trabalhista">PDT</option>
+		<option value="Partido Humanista da Solidariedade">PHS</option>
+		<option value="Partido do Movimento Democrático Brasileiro">PMDB</option>
+		<option value="Partido da Mobilização Nacional">PMN</option>
+		<option value="Partido Progressista">PP</option>
+		<option value="Partido Pacifista Brasileiro">PPB</option>
+		<option value="Partido Popular Socialista">PPS</option>
+		<option value="Partido da República">PR</option>
+		<option value="Partido Republicano Brasileiro">PRB</option>
+		<option value="Partido Republicano Progressista">PRP</option>
+		<option value="Partido Renovador Trabalhista Brasileiro">PRTB</option>
+		<option value="Partido Socialista Brasileiro">PSB</option>
+		<option value="Partido Social Cristão">PSC</option>
+		<option value="Partido da Social Democracia Brasileira">PSDB</option>
+		<option value="Partido Social Democrata Cristão">PSDC</option>
+		<option value="Partido Social Liberal">PSL</option>
+		<option value="Partido Socialismo e Liberdade">PSOL</option>
+		<option value="Partido Socialismo e Liberdade">PST</option>
+		<option value="Partido Socialista dos Trabalhadores Unificado">PSTU</option>
+		<option value="Partido dos Trabalhadores">PT</option>
+		<option value="Partido Trabalhista do Brasil">PT do B</option>
+		<option value="Partido Trabalhista Brasileiro">PTB</option>
+		<option value="Partido Trabalhista Cristão">PTC</option>
+		<option value="Partido Trabalhista Nacional">PTN</option>
+		<option value="Partido Verde">PV</option>
 		<option value="S/Partido">S/Partido</option>
 	</select>
 	
@@ -111,48 +107,10 @@
 	<br />
 	<select name="sexo" class="filtro"> 
 		<option value="" /> 
-		<option value="Masculino"><?php escreve("Maculino","Male"); ?></option>
-		<option value="Feminino"><?php escreve("Feminino","Female"); ?></option>
+		<option value="MASCULINO"><?php escreve("MASCULINO","Male"); ?></option>
+		<option value="FEMININO"><?php escreve("FEMININO","Female"); ?></option>
 	</select>
 
-	<br />
-	<?php escreve("Cidade de Nascimento:","City of birth:"); ?>
-	<br />
-	<input type="text" name="cidade_nascimento" class="filtro" value="<?php echo $cidade_nascimento; ?>" />
-	
-	<br />
-	<?php escreve("Estado de Nascimento:","State of birth:"); ?>
-	<br />
-	<select name="estado_nascimento" class="filtro"> 
-		<option value="" /> 
-		<option value="AC"> Amazonas </option>
-		<option value="AL"> Alagoas </option>
-		<option value="AM"> Amazonas </option>
-		<option value="AP"> Amapá </option>
-		<option value="BA"> Bahia </option>
-		<option value="CE"> Ceará </option>
-		<option value="DF"> Distrito Federal </option>
-		<option value="ES"> Espírito Santo </option>
-		<option value="GO"> Goiás </option>
-		<option value="MA"> Maranhão </option>
-		<option value="MG"> Minas Gerais </option>
-		<option value="MS"> Mato Grosso do Sul </option>
-		<option value="MT"> Mato Grosso </option>
-		<option value="PA"> Pará </option>
-		<option value="PB"> Paraíba </option>
-		<option value="PE"> Pernambuco </option>
-		<option value="PI"> Piauí </option>
-		<option value="PR"> Paraná </option>
-		<option value="RJ"> Rio de Janeiro </option>
-		<option value="RN"> Rio Grande do Norte </option>
-		<option value="RO"> Rondônia </option>
-		<option value="RR"> Roraima </option>
-		<option value="RS"> Rio Grande do Sul </option>
-		<option value="SC"> Santa Catarina </option>
-		<option value="SE"> Sergipe </option>
-		<option value="SP"> São Paulo </option>
-		<option value="TO"> Tocantins </option>
-	</select>
 
 	<br />
 	<?php escreve("Gráfico:","Chart:"); ?>
@@ -172,19 +130,16 @@
 	<br />
 	<?php escreve("Ordem:","Order:"); ?>
 	<br />
-	<select name="ordem" class="filtro"> 
-		<option value="nome ASC"> <?php escreve("Alfabética (A-Z)","Alphabetical (A-Z)"); ?> </option>
-		<option value="nome DESC"> <?php escreve("Alfabética (Z-A)","Alphabetical (Z-A)"); ?> </option>
-		<option value="valor DESC" selected> <?php escreve("Valor (Maior-Menor)","Value (Desc)"); ?> </option>
-		<option value="valor ASC"> <?php escreve("Valor (Menor-Maior)","Value (Asc)"); ?> </option>
+	<select name="ordem" class="filtro">
+        <option value=""> <?php escreve("",""); ?> </option>
+		<option value="ORDER BY ASC (?x)"> <?php escreve("Alfabética (A-Z)","Alphabetical (A-Z)"); ?> </option>
+		<option value="ORDER BY DESC (?x)"> <?php escreve("Alfabética (Z-A)","Alphabetical (Z-A)"); ?> </option>
+		<option value="" selected> <?php escreve("Valor (Maior-Menor)","Value (Desc)"); ?> </option>
+		<option value=""> <?php escreve("Valor (Menor-Maior)","Value (Asc)"); ?> </option>
 	</select>
 
 	<br />
-	<?php escreve("Limite:","Limit:"); ?>
 	<br />
-	<input type="text" name="limite1" style="width:55px;" align="center" value="<?php echo $limite1; ?>" />	-
-	<input type="text" name="limite2" style="width:55;" align="center" value="<?php echo $limite2; ?>" /> 
-	<br /><br />
 	<input type="submit" value="OK" />
 </form>
 

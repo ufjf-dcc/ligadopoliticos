@@ -48,8 +48,9 @@ $curl = curl_init();//inicializando o curl
        
      
        ///////// come��ando a manipula����o de dados/////////////
-       $objects = array();      
+       $objects = array();
        $resultado = json_decode($resposta);//Decodificando o objecto json
+
        
        //pegando o valor de interesse no array//
        foreach($resultado->results->bindings as $reg){// primeiro loop
@@ -61,6 +62,6 @@ $curl = curl_init();//inicializando o curl
 }//sai do segundo loop
            
          $row =  objectToArray($objects);
- return $row;          
+        return $row;
 }   
 ?>
