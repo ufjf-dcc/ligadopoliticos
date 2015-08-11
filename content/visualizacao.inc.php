@@ -46,7 +46,7 @@ function geraGrafico($consulta,$grafico, $X1, $X2, $Y1,$Y2){
         $i=0;
         foreach ($row1 as $row) {
             $i++;
-            echo $row['x'].$row['count']."-";
+            //echo $row['x'].$row['count']."-";
             if($row['x']=="MA")$row['x'] = "MARANHAO";
             if($row['x']=="ZZ")$row['x'] = "NAO INFORMADO";
             $partido = explode(":",$row['x']);
@@ -118,7 +118,8 @@ switch ($id_grafico){
 	"select ?x (COUNT(?x) AS ?count)
   WHERE
   {
-    ?y <http://www.rdfabout.com/rdf/schema/politico/party> ?x
+    ?y <http://www.rdfabout.com/rdf/schema/politico/party> ?x .
+        FILTER(isLiteral(?x))
     	",
 	"",
 	"  }GROUP BY ?x",

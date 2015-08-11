@@ -744,7 +744,6 @@
 
            			}";
 
-                echo $endereco;
 		$url = urlencode($endereco);
 		$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'+limit+1';
 
@@ -820,7 +819,6 @@
 				     DELETE { ?election polbr:CNPJ \"$NewCnpjCampanha\" } $where
 
 				";
-			 echo $endereco;
 			$url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
@@ -891,22 +889,34 @@
 		
 			$endereco = "insert data {  
 						 <http://ligadonospoliticos.com.br/politico/$id_politico>  polbr:election _:election.
-						 _:election timeline:atYear \"$ano\".
-						 _:election foaf:name \"$nome_urna\" .
-						 _:election biblio:number \"$numero_candidato\" .
-						 _:election pol:party \"$partido\" .
-						 _:election pol:Office \"$cargo\" .
-						 _:election geospecies:State \"$cargo_uf\" .
-						 _:election earl:outcome \"$resultado\" .
-						 _:election spinrdf:Union \"$nome_coligacao\" .
-						 _:election polbr:unionParties \"$partidos_coligacao\".
-						 _:election polbr:situation \"$situacao_candidatura\" .
-						 _:election polbr:protocolNumber \"$numero_protocolo\" .
-						 _:election polbr:processNumber \"$numero_processo\" .
-						 _:election polbr:CNPJ \"$cnpj_campanha\" .
-		   			}";
+						 _:election timeline:atYear \"$ano\".";
+            if (isset($nome_urna))
+                $endereco = $endereco ."_:election foaf:name \"$nome_urna\" .";
+            if (isset($numero_candidato))
+                $endereco = $endereco ."_:election biblio:number \"$numero_candidato\" .";
+            if (isset($partido))
+                $endereco = $endereco ."_:election pol:party \"$partido\" .";
+            if (isset($cargo))
+                $endereco = $endereco ."_:election pol:Office \"$cargo\" .";
+            if (isset($cargo_uf))
+                $endereco = $endereco ."_:election geospecies:State \"$cargo_uf\" .";
+            if (isset($resultado))
+                $endereco = $endereco ."_:election earl:outcome \"$resultado\" .";
+            if (isset($nome_coligacao))
+                $endereco = $endereco ."_:election spinrdf:Union \"$nome_coligacao\" .";
+            if (isset($partidos_coligacao))
+                $endereco = $endereco ."_:election polbr:unionParties \"$partidos_coligacao\".";
+            if (isset($situacao_candidatura))
+                $endereco = $endereco ."_:election polbr:situation \"$situacao_candidatura\" .";
+            if (isset($numero_protocolo))
+                $endereco = $endereco ."_:election polbr:protocolNumber \"$numero_protocolo\" .";
+            if (isset($numero_processo))
+                $endereco = $endereco ."_:election polbr:processNumber \"$numero_processo\" .";
+            if (isset($cnpj_campanha))
+                $endereco = $endereco ."_:election polbr:CNPJ \"$cnpj_campanha\" .";
+		   			$endereco = $endereco ."}";
 
-                         echo $endereco;
+            echo $endereco;
 			$url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
 
@@ -1657,12 +1667,16 @@
         $id = $id_politico;
         $politico = "<http://ligadonospoliticos.com.br/politico/$id_politico>";
 
+
+
         $format = 'application/sparql-results+xml';
 
         //deletando dados para inserir dados novos
         $endereco = "
-					DELETE DATA{ $politico pol:Office \"Deputado\" };
-
+					DELETE
+					    WHERE{
+					    $politico pol:Office ?x
+                        }
 				";
         $url = urlencode($endereco);
         $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
@@ -1791,7 +1805,7 @@
 					DELETE DATA{ $politico polbr:officeState \"$NewCargoUf\" };
 					DELETE DATA{ $politico pol:party \"$NewPartido\" };
 					DELETE DATA{ $politico polbr:situation \"$NewSituacao\" };
-				
+
 				";
 			$url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		

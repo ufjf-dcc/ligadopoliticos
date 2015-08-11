@@ -93,7 +93,7 @@ if ($situacao == 'Em Exercicio' ){
         $consulta_situacao =
             "
         {
-         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Não Eleito\" , \"i\")
+         ?y <http://ligadonospoliticos.com.br/politicobr#situation> ?situ FILTER regex (?situ , \"Não Eleito \" , \"i\")
         }
         UNION
         {
