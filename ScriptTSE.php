@@ -5,8 +5,6 @@
  </head>
  <body>
     <?php
-        error_reporting(E_ALL);
-        ini_set("display_errors", 1);
         include("simple_html_dom/simple_html_dom.php");
         include('controleRaspagem.php');
         include('upgrade.database.php');
@@ -23,7 +21,7 @@
             $arquivo = file('/var/www/html/ligadopoliticos/controlador.txt');
                 $t = (int)$arquivo[0];
                 $c = 0;
-                $url0="http://divulgacand2014.tse.jus.br".$estados[6];//comecei no 6
+                $url0="http://divulgacand2014.tse.jus.br".$estados[19];//comecei no 6
                 //$html0= file_get_html($url0);
                 $html0 = new simple_html_dom();
                 $html0->load_file($url0);

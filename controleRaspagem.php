@@ -8,8 +8,6 @@
 
     function rasPolitico($link){
         $login = "marcos:123" ;
-        error_reporting(E_ALL);
-        ini_set("display_errors", 1);
         $html2 = file_get_html($link);
 
             //RASPAGEM DE DADOS PESSOAIS DO POLITICO
@@ -78,10 +76,10 @@
                 //echo "<img src ='$link' height='150' width='120'>" . '<br>';
                 foto_politico($link, $resposta);
             }*/
-            /*
+
             //RASPAGEM DE DECLARACAO DE BENS
             $id = existepoliDecla($pessoais[3]->plaintext);
-            echo "POLITICO:".$id."<br>";
+            //echo "POLITICO:".$id."<br>";
             foreach($html2->find('div[id="conteudo-tabs"]') as $declaracaoBens) {
                 foreach ($declaracaoBens->find('div[class="tab-pane active"]') as $declaracaoBens1){
                     foreach ($declaracaoBens1->find('table[class="table table-condensed table-bordered table-striped"]') as $decla) {
@@ -109,8 +107,8 @@
                     }
                 }
             }
-        return 1;
-    */
+        //return 1;
+
     } 
     
     ?>

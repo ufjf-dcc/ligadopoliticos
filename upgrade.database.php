@@ -1,6 +1,6 @@
 <?php
 
-	error_reporting(E_ALL);
+
 	//Login:Senha
 	$login = "marcos:123" ;
 
@@ -508,7 +508,8 @@
 			}
 		}
 	
-		if($achou){ echo "já foi inserido"; }
+		if($achou){ //echo "já foi inserido";
+		}
 		/*$objects = array();
 		        $results = json_decode($resposta);//descodifica o objeto json para um array
 			//pega o valor dentro de dois array
@@ -867,7 +868,6 @@
 					 ?election timeline:atYear \"$ano\".}"; 
 			
 
-                         echo $endereco;
 			$url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';		
 
@@ -916,7 +916,6 @@
                 $endereco = $endereco ."_:election polbr:CNPJ \"$cnpj_campanha\" .";
 		   			$endereco = $endereco ."}";
 
-            echo $endereco;
 			$url = urlencode($endereco);
 			$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';			
 
