@@ -55,7 +55,7 @@
 			echo "<b>Situação:</b> <a href='../../?pag=resultadobusca&situacao=".$row['situacao']."'>".$row['situacao']."</a><br />";
 		if(isset($row['cargo']) )
                     if($row['cargo']!= null)
-			echo "<b>Cargo:</b> <a href='../../?pag=resultadobusca&cargo=".$row['cargo']."'>".$row['cargo']."</a><br />";
+			echo "<b>Cargo:</b> <a href='../../?pag=resultadobusca&cargo1=".$row['cargo']."'>".$row['cargo']."</a><br />";
 		if(isset($row['cargo_uf']) )
                     if($row['cargo_uf']!= null)
 			echo "<b>Estado:</b> <a href='../../?pag=resultadobusca&estado=".$row['cargo_uf']."'>".$row['cargo_uf']."</a><br />";
