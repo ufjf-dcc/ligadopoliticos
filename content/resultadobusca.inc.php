@@ -137,7 +137,6 @@ if ($estado <> ''){
 
 /////////////////////////////////////////////
 if ($cargo <> ''){
-    echo '<h1> entrou </h1>';
   if ($situacao == 'Candidato' || $situacao == 'Candidato Eleito' || $situacao == 'Candidato Nao-Eleito')
 	   //$consulta_cargo = " AND e.cargo = '$cargo'";
            $consulta_cargo = '?id_politico polbr:election ?blank.
@@ -147,7 +146,7 @@ if ($cargo <> ''){
 	   //$consulta_cargo = " AND p.cargo = '$cargo'";
             $consulta_cargo = 'filter(?cargo = "'.$cargo.'")
                  ';
-	$consulta= $consulta.$consulta_cargo;
+	//$consulta= $consulta.$consulta_cargo;
         $sparqlConsulta = $sparqlConsulta.$consulta_cargo;
 }
 
