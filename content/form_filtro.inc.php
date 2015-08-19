@@ -18,16 +18,16 @@
 	<br />
 	<select name="cargo" class="filtro"> 
 		<option value="" /> 
-		<option value="Presidente"> <?php escreve("Presidente","President"); ?> </option>
-		<option value="Vice-Presidente"> <?php escreve("Vice-Presidente","Vice President"); ?>  </option>
-		<option value="Governador"> <?php escreve("Governador","Governor"); ?>  </option>
-		<option value="Vice-Governador"> <?php escreve("Vice-Governador","Vice Governor"); ?>  </option>
-		<option value="Senador"> <?php escreve("Senador","Senator"); ?>  </option>
-		<option value="Senador 1º Suplente"> <?php escreve("1º Suplente Senador","1st Alternate Senator"); ?> </option>
-		<option value="Senador2º Suplente"> <?php escreve("2º Suplente Senador","2nd Alternate Senator"); ?> </option>
-		<option value="Deputado Federal"> <?php escreve("Deputado Federal","Congressman"); ?> </option>
-		<option value="Deputado Estadual"> <?php escreve("Deputado Estadual","State Representative"); ?> </option>
-		<option value="Deputado Distrital"> <?php escreve("Deputado Distrital","District Representative"); ?> </option>
+		<option value="Presidente "> <?php escreve("Presidente","President"); ?> </option>
+		<option value="Vice-Presidente "> <?php escreve("Vice-Presidente","Vice President"); ?>  </option>
+		<option value="Governador "> <?php escreve("Governador","Governor"); ?>  </option>
+		<option value="Vice-Governador "> <?php escreve("Vice-Governador","Vice Governor"); ?>  </option>
+		<option value="Senador "> <?php escreve("Senador","Senator"); ?>  </option>
+		<option value="Senador 1º Suplente "> <?php escreve("1º Suplente Senador","1st Alternate Senator"); ?> </option>
+		<option value="Senador2º Suplente "> <?php escreve("2º Suplente Senador","2nd Alternate Senator"); ?> </option>
+		<option value="Deputado Federal "> <?php escreve("Deputado Federal","Congressman"); ?> </option>
+		<option value="Deputado Estadual "> <?php escreve("Deputado Estadual","State Representative"); ?> </option>
+		<option value="Deputado Distrital "> <?php escreve("Deputado Distrital","District Representative"); ?> </option>
 	</select>
 
 	<br />

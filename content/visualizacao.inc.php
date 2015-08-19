@@ -39,15 +39,16 @@ function geraGraficoSparql($consulta,$grafico, $X1, $X2, $Y1,$Y2){
     $row1 = consultaSPARQL($consulta);
 	$tamanho = 30 * 15;
 	$color = '';
+
 	if ($grafico == '' || $grafico == 'FCF_Bar2D' || $grafico == 'FCF_Area2D' || $grafico == 'FCF_Column2D' || $grafico == 'FCF_Column3D' || $grafico == 'FCF_Line')
 		$color = '9C9CDB';
 	if ($row1) {
         $i=0;
         foreach ($row1 as $row) {
             $i++;
-            if($row['x']=="MA")$row['x'] = "MARANHAO";
             if($row['x']=="ZZ")$row['x'] = "NAO INFORMADO";
-            $strXML .="<set  color='". $color ."' name='" . $row['x'] . "' value='" . (int)$row['count'] . "'/>";
+            if($row['count']==0) echo "A consulta não gerou nenhum dado, tente novamente!";
+            else $strXML .="<set  color='". $color ."' name='" . $row['x'] . "' value='" . (int)$row['count'] . "'/>";
         }
         if($i>=30)$tamanho = $tamanho * 2;
 	}
@@ -121,19 +122,22 @@ switch ($id_grafico) {
         break;
 
     case 'cargo_uf':
-        geraVisualizacaoSparql("select ?x (COUNT(?x) AS ?count)
+        geraVisualizacaoSparql( " select ?x (COUNT(?x) AS ?count)
   WHERE
   {
-        ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> ?x .
-", "", "} GROUP BY ?x ", "Estado (Cargo)", "State (Office)", "Número de Políticos", "Number of Politicians");
+        ?y <http://ligadonospoliticos.com.br/politicobr#election> ?ele .
+    	?ele <http://motools.sourceforge.net/timeline/timeline.html#atYear>	\"2014\" .
+    	?ele <http://rdf.geospecies.org/ont/geospecies#State> ?x.
+" , "", "} GROUP BY ?x ", "Estado (Cargo)", "State (Office)", "Número de Políticos", "Number of Politicians");
         break;
 
     case 'partido':
         geraVisualizacaoSparql("select ?x (COUNT(?x) AS ?count)
   WHERE
   {
-    ?y <http://www.rdfabout.com/rdf/schema/politico/party> ?x .
-        FILTER(isLiteral(?x))
+      ?y <http://ligadonospoliticos.com.br/politicobr#election> ?ele .
+      ?ele <http://motools.sourceforge.net/timeline/timeline.html#atYear> \"2014\".
+      ?ele <http://www.rdfabout.com/rdf/schema/politico/party> ?x.
     	", "", "  }GROUP BY ?x", "Partido", "Party", "Número de Políticos", "Number of Politicians");
         break;
 
@@ -158,7 +162,8 @@ switch ($id_grafico) {
         WHERE
         {
             ?y <http://models.okkam.org/ENS-core-vocabulary#occupation> ?x
-    	", "", " }GROUP BY ?x", "Ocupação", "Occupation", "Número de Políticos", "Number of Politicians");
+    	", "", " }GROUP BY ?x
+                order by desc(?count) ", "Ocupação", "Occupation", "Número de Políticos", "Number of Politicians");
         break;
 
     case 'nacionalidade':
@@ -173,15 +178,18 @@ switch ($id_grafico) {
         geraVisualizacaoSparql("select ?x (COUNT(?x) AS ?count)
         WHERE
         {
-            ?y <http://purl.org/ontomedia/ext/common/being#place-of-birth> ?x
-    	", "", " }GROUP BY ?x", "Cidade de Nascimento", "City of Birth", "Número de Políticos", "Number of Politicians");
+            ?y <http://purl.org/ontomedia/ext/common/being#place-of-birth> ?x .
+            FILTER(isLiteral(?x))
+    	", "", " }GROUP BY ?x
+    	        order by desc(?count)
+                Limit 90", "Cidade de Nascimento", "City of Birth", "Número de Políticos", "Number of Politicians");
         break;
 
     case 'estado_nascimento':
         geraVisualizacaoSparql("select ?x (COUNT(?x) AS ?count)
         WHERE
         {
-            ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> ?x
+            ?y <http://ligadonospoliticos.com.br/politicobr#state-of-birth> ?x .
     	", "", " }GROUP BY ?x", "Estado de Nascimento", "State of Birth", "Número de Políticos", "Number of Politicians");
         break;
 
@@ -190,7 +198,7 @@ switch ($id_grafico) {
         break;
 
     case 'declaracao_bens':
-        geraVisualizacaoSparql("SELECT UCASE(p.nome_civil) AS nome, SUM(d.valor) AS valor FROM politico p", " JOIN declaracao_bens d ON p.id_politico = d.id_politico", " GROUP BY p.nome_civil", "Político", "Politician", "Total da Declaração de Bens", "Declaration of Assets Total");
+        geraVisualizacaoSql("SELECT UCASE(p.nome_civil) AS nome, SUM(d.valor) AS valor FROM politico p", " JOIN declaracao_bens d ON p.id_politico = d.id_politico", " GROUP BY p.nome_civil", "Político", "Politician", "Total da Declaração de Bens", "Declaration of Assets Total");
         break;
 
     case 'lideranca':

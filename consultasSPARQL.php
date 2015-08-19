@@ -21,8 +21,7 @@ function objectToArray($d) {
 	}
         
 function consultaSPARQL($sparql){
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
+
 $dados = new Constant;
 $login = getProperty($dados->DB_LOGIN_SPARQL);
 $url_sparql = getProperty($dados->DB_URL_SPARQL);

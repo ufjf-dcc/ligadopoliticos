@@ -55,7 +55,7 @@
                         }
                         $i = $i + 1;  
                     }
-                    echo "<br>";
+                    /*echo "<br>";
                     echo "Nome Civil: ".$cont[0]."<br>";
                     echo "Data de nascimento: ".$cont[1]."<br>";
                     echo "Partido / UF: ".$cont[2]."<br>";
@@ -63,21 +63,19 @@
                     echo "Endereço Parlamentar: ".$cont[4]."<br>";
                     echo "Telefones: ".$cont[5]."<br>";
                     echo "Faz: ".$cont[6]."<br>";
-                    echo "Correio Eletronico: ".$cont[7]."<br>";
+                    echo "Correio Eletronico: ".$cont[7]."<br>";*/
                     
                     $anexo = null;$ala = null;$gabinete = null;$email = $cont[7];$telefone = $cont[5];
                     $fax = $cont[6];$tipo = null;$rua = null;$bairro= null;$cidade = null;
                     $estado = null; $CEP = null; $CNPJ = null; $telefone_parlamento = null;
                     $disque =null;$site=null;
-                    
-                    echo "-------------<br>";
+
                     if($k == 1){
                         echo existePoli($cont[0], $cont[1]);
                         $resposta = endereco_parlamentar_politico(existePoli($cont[0], $cont[1]), $anexo, $ala, 
                                 $gabinete, $email, $telefone, 
                                 $fax, $tipo, $rua, $bairro, $cidade, $estado, 
                                 $CEP, $CNPJ, $telefone_parlamento, $disque, $site);
-                        echo $resposta;
                     }
 
                     //Mandato
