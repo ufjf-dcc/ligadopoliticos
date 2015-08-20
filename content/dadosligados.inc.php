@@ -1,5 +1,6 @@
 <?php
-escreve("oi");
+    include ("head.inc.php");
+    include ("../functions.php");
 escreve("
 
 <h2>Dados Ligados</h2>

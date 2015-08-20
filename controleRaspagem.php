@@ -64,7 +64,7 @@
                         $ocupacao, $grau_instrucao, $nacionalidade, $cidade_nascimento, 
                         $estado_nascimento, $cidade_eleitoral, $estado_eleitoral, $site, 
                         $email, $cargo, $cargo_uf, $partido, $situacao);*/
-                $resposta = politicoTeste($nome_civil,$data_nascimento,$cargo);
+                $resposta = politicoTeste($nome_civil,$data_nascimento,$cargo,$cidade_nascimento);
                 $id_politico = existePoli($nome_civil,$data_nascimento);
                 $resposta_eleicao = eleicao($id_politico,"2014",$nome_parlamentar,$numero,$partido,$cargo,$estado,$situacao,$coligacao,$partidos_coligacao,$situacao_cand,$numero_protocolo,$numero_processo,$CNPJ);
             }

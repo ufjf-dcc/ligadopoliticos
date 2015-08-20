@@ -58,7 +58,7 @@ function geraGraficoSparql($consulta,$grafico, $X1, $X2, $Y1,$Y2){
 	echo renderChart("../fusioncharts/".$grafico.".swf", "", $strXML, "", 800,$tamanho);
 }
 
-    function geraGraficoSql($consulta,$grafico, $X1, $X2, $Y1,$Y2){
+function geraGraficoSql($consulta,$grafico, $X1, $X2, $Y1,$Y2){
         include("../fusioncharts/FusionCharts.php");
         $strXML = "<graph decimalPrecision='0' showNames='1' showPercentageInLabel='1' showPercentageValues='0' formatNumberScale='0' thousandSeparator='.' xAxisName= '" . retorna ($X1,$X2) . "' yAxisName='" . retorna ($Y1,$Y2) . "'>";
         $tamanho = '500';
@@ -113,12 +113,12 @@ if (isset($_GET['id_grafico']))
 switch ($id_grafico) {
 
     case 'cargo':
-
         geraVisualizacaoSparql("select ?x (COUNT(?x) AS ?count)
   WHERE
   {
     ?y <http://www.rdfabout.com/rdf/schema/politico/Office> ?x.
-  ", "", " }GROUP BY ?x", "Cargo", "Office", "Número de Políticos", "Number of Politicians");
+  ", "", " }GROUP BY ?x
+            order by desc(?count)", "Cargo", "Office", "Número de Políticos", "Number of Politicians");
         break;
 
     case 'cargo_uf':

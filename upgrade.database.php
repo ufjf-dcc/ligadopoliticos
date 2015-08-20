@@ -1,6 +1,6 @@
 <?php
-	//Login:Senha
-	$login = "marcos:123" ;
+	//Login:Senha do SPARQL neste formato
+	$login = "login:senha" ;
 	/* Funções referentes as tabelas do bando de dados.
 	 * Encontra um certo dado e o atualiza ou
 	 * Insere um novo dado no banco.
@@ -103,35 +103,6 @@
                 default: return $sigla;
             }    
         }
-        
-    function existepoliDecla($nome){
-            $aux = '"';
-            $format = 'application/sparql-results+json';
-            $endereco = "select ?id {?id foaf:name ".$aux.$nome.$aux.".  
-                            }";
-		$url = urlencode($endereco);
-		$sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'+limit+1';
-
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);	
-	    	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
-	    	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
-	    	curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
-	    	$resposta = curl_exec( $curl );
-	    	curl_close($curl);
-		$resposta =  str_replace("http://ligadonospoliticos.com.br/politico/","", $resposta);	//retorna id do politico?!	
-
-                $respostaJson = json_decode($resposta);
-                $respostaJson = $respostaJson->results;
-                $respostaJson = $respostaJson->bindings[0];
-                $respostaJson = $respostaJson->id;
-                $respostaJson = $respostaJson->value;
-                $respostaJson = (int)$respostaJson;
-		if($respostaJson == null){
-                    return 0;}
-		if($respostaJson != null){return $respostaJson;}
-
-	}
 
 	function afastamento($id_politico, $cargo, $cargo_uf, $data, $tipo, $motivo){
 
@@ -1641,59 +1612,6 @@
 		}
 		
 	}
-
-	function politicoTeste($nome_civil, $data_nascimento, $cargo,$cidade_nascimento){
-        $cidade_nasci = explode('-', $cidade_nascimento);
-        $cidade_nascimento = $cidade_nasci[1];
-        $estado_nascimento = converte_estado($cidade_nasci[0]);
-        $id_politico = existePoli($nome_civil, $data_nascimento);
-        $id = $id_politico;
-        $politico = "<http://ligadonospoliticos.com.br/politico/$id_politico>";
-
-
-
-        $format = 'application/sparql-results+xml';
-
-        //deletando dados para inserir dados novos
-        $endereco = "
-					DELETE
-					    WHERE{
-					    $politico pol:Office ?x .
-					    $politico polbr:state-of-birth ?y .
-					    $politico being:place-of-birth ?z.
-                        }
-				";
-        $url = urlencode($endereco);
-        $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);
-        curl_setopt($curl, CURLOPT_URL, $sparqlURL);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST"); // Delete precisa ser feito por POSTcurl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
-        curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
-        $resposta = curl_exec( $curl );
-        curl_close($curl);
-
-
-        $endereco = "insert data{
-            $politico  pol:Office \"$cargo\" .
-            $politico  polbr:state-of-birth \"$estado_nascimento\" .
-            $politico  being:place-of-birth \"$cidade_nascimento\" .
-              }";
-        $url = urlencode($endereco);
-        $sparqlURL = 'http://localhost:10035/repositories/politicos_brasileiros?query='.$url.'';
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_USERPWD, $GLOBALS['login']);
-        curl_setopt($curl, CURLOPT_URL, $sparqlURL);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
-        curl_setopt($curl,CURLOPT_HTTPHEADER,array('Accept: '.$format ));
-        $resposta = curl_exec( $curl );
-        curl_close($curl);
-        return $id;
-
-    }
 	
 	function politico($nome_civil, $nome_parlamentar, $nome_pai, $nome_mae, $foto, $sexo, $cor, $data_nascimento, $estado_civil, $ocupacao, $grau_instrucao, $nacionalidade, $cidade_nascimento, $estado_nascimento, $cidade_eleitoral, $estado_eleitoral, $site, $email, $cargo, $cargo_uf, $partido, $situacao){
 

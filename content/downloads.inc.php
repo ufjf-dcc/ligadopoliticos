@@ -1,13 +1,19 @@
 <h2>Downloads</h2>
 
 <?php
-include '../consultasSPARQL.php';
-$fp = fopen("./downloads/afastamento.csv", "w");
+    include ("head.inc.php");
+include ('../consultasSPARQL.php');
+    include('../properties.php');
+    include ("../functions.php");
+    include ('../config.php');
+
+
+$fp = fopen("../downloads/afastamento.csv", "w");
 
 $quebra = chr(13).chr(10);
 $escrita = "id_afastamento;id_politico;cargo;cargo_uf;data;tipo;motivo;".$quebra;
 
-//$consulta = "SELECT * FROM afastamento"; 
+//$consulta = "SELECT * FROM afastamento";
 
 $sparql = consultaSPARQL('select ?y
                         where {
@@ -18,7 +24,7 @@ $sparql = consultaSPARQL('select ?y
                           OPTIONAL {?x dcterms:type ?type}.
                           OPTIONAL {?x event:fact ?motivo}.
                         }');
-$sql = mysql_query($consulta);
+//$sql = mysql_query($consulta);
 
 foreach ($sparql as $row)
 {

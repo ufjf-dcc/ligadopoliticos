@@ -21,7 +21,7 @@
             $arquivo = file('/var/www/html/ligadopoliticos/controlador.txt');
                 $t = (int)$arquivo[0];
                 $c = 0;
-                $url0="http://divulgacand2014.tse.jus.br".$estados[19];//comecei no 6
+                $url0="http://divulgacand2014.tse.jus.br".$estados[0];//cada indice corresponde a um link de um estado
                 //$html0= file_get_html($url0);
                 $html0 = new simple_html_dom();
                 $html0->load_file($url0);

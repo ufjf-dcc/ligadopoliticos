@@ -190,11 +190,11 @@ if ($estado_eleitoral <> ''){
 	//$consulta= $consulta.$consulta_estado_eleitoral;
 }
 
-    $consulta = $consulta.$group_by;
+$consulta = $consulta.$group_by;
 
-    if($ordem = "nome ASC")$ordem = "";
+if($ordem = "nome ASC")$ordem = "";
 
-    $consulta = $consulta.$ordem;
+$consulta = $consulta.$ordem;
 
 if ($id_grafico == 'ocupacao' || $id_grafico == 'declaracao_bens' || $id_grafico == 'cidade_nascimento'){
 	$limite1 = '0';
