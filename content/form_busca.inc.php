@@ -11,6 +11,27 @@
 				<input type="text" name="nome" size="55" />
 			</td>
 		</tr>
+                <tr>
+                    <td>
+                        <?php escreve("Ano:","Year:"); ?>
+                    </td>
+                    <td>
+                        <select name="ano">
+                            <?php 
+                            $consultaAnos ="select ?ano
+                                            where{ ?id_politico polbr:election ?election. 
+                                                   ?election timeline:atYear ?ano
+                                                             }
+                                            group by ?ano
+                                            order by ?ano";
+                            $resultadoAnos = consultaSPARQL($consultaAnos);
+                            foreach ($resultadoAnos as $anos){
+                                echo '<option value="'.$anos['ano'].'">'.$anos['ano'].'</option>';
+                            }
+                            ?>
+                        </select>
+                    </td>
+                </tr>
 		<tr>
 			<td>
 				<?php escreve("Situação:","Status:"); ?>
@@ -44,6 +65,9 @@
   					<option value="Deputado Federal"> <?php escreve("Deputado Federal","Congressman"); ?> </option>
   					<option value="Deputado Estadual"> <?php escreve("Deputado Estadual","State Representative"); ?> </option>
   					<option value="Deputado Distrital"> <?php escreve("Deputado Distrital","District Representative"); ?> </option>
+                                        <option value="Prefeito"> <?php escreve("Prefeito","Mayor"); ?> </option>
+                                        <option value="Vice-prefeito"> <?php escreve("Vice-prefeito","Deputy mayor"); ?> </option>
+                                        <option value="Vereador"> <?php escreve("Vereador","Alderman"); ?> </option>
   				</select>
   			</div>
 			  <div id='cargo2'>
@@ -66,7 +90,7 @@
 			<td>		
 				<select name="estado" /> 
 					<option value="" /> 
-					<option value="AC"> Amazonas </option>
+					<option value="AC"> Acre </option>
 					<option value="AL"> Alagoas </option>
 					<option value="AM"> Amazonas </option>
 					<option value="AP"> Amapá </option>
@@ -133,7 +157,7 @@
 					<option value="PTC">PTC</option>
 					<option value="PTN">PTN</option>
 					<option value="PV">PV</option>
-					<option value="S/Partido">S/Partido</option>
+					<option value="S/ Partido">S/Partido</option>
 				</select>
 			</td>
 		</tr>
@@ -144,8 +168,8 @@
 			<td>
 				<select name="sexo" /> 
 					<option value="" /> 
-					<option value="Masculino"><?php escreve("Maculino","Male"); ?></option>
-					<option value="Feminino"><?php escreve("Feminino","Female"); ?></option>
+					<option value="MASCULINO"><?php escreve("Maculino","Male"); ?></option>
+					<option value="FEMININO"><?php escreve("Feminino","Female"); ?></option>
 				</select>
 			</td>
 		</tr>

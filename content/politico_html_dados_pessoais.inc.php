@@ -6,33 +6,41 @@
 	$nome_parlamentar = '';
 	//$sql1 = mysql_query("SELECT * FROM politico WHERE id_politico = '$recurso'");
         $sparql1 = consultaSPARQL('
-            select  ?nome_civil ?nome_parlamentar ?nome_pai ?nome_mae ?foto ?sexo ?cor ?data_nascimento ?estado_civil ?ocupacao ?grau_instrucao ?nacionalidade
-            ?cidade_nascimento ?estado_nascimento ?cidade_estado_eleitoral ?site ?email ?cargo ?cargo_uf ?partido ?situacao
+             select  ?nome_civil ?nome_parlamentar ?nome_pai ?nome_mae ?foto ?sexo ?cor ?data_nascimento ?estado_civil ?ocupacao ?grau_instrucao ?nacionalidade
+            ?cidade_nascimento ?estado_nascimento ?cidade_estado_eleitoral ?email ?cargo ?cargo_uf ?partido ?situacao
             where {
-              <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:name ?nome_civil .
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:governmentalName ?nome_parlamentar }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> bio:father ?nome_pai }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> bio:father ?nome_mae }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:img ?foto }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:gender ?sexo }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> person:complexion ?cor }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:birthday ?data_nascimento }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:maritalStatus ?estado_civil }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> person:occupation ?ocupacao }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> dcterms:educationLevel ?grau_instrucao }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> dbpprop:nationality ?nacionalidade }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> being:place-of-birth ?cidade_nascimento }. 
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:state-of-birth ?estado_nascimento }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:place-of-vote ?cidade_estado_eleitoral }
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> foaf:homepage ?site }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> biblio:Email ?email }. 
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> pol:Office ?cargo }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:officeState ?cargo_uf }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> pol:party ?partido }.
-              OPTIONAL{ <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:situation ?situacao }.        
+              ?x foaf:name ?nome_civil .
+			  filter(?x = <http://ligadonospoliticos.com.br/politico/'.$recurso.'>).
+              OPTIONAL{ ?x polbr:governmentalName ?nome_parlamentar }.
+              OPTIONAL{ ?x bio:father ?nome_pai }.
+              OPTIONAL{ ?x bio:mother ?nome_mae }.
+              OPTIONAL{ ?x foaf:img ?foto }.
+              OPTIONAL{ ?x foaf:gender ?sexo }.
+              OPTIONAL{ ?x person:complexion ?cor }.
+              OPTIONAL{ ?x foaf:birthday ?data_nascimento }.
+              OPTIONAL{ ?x polbr:maritalStatus ?estado_civil }.
+              OPTIONAL{ ?x person:occupation ?ocupacao }.
+              OPTIONAL{ ?x dcterms:educationLevel ?grau_instrucao }.
+              OPTIONAL{ ?x dbpprop:nationality ?nacionalidade }.
+              OPTIONAL{ ?x being:place-of-birth ?cidade_nascimento }. 
+              OPTIONAL{ ?x polbr:state-of-birth ?estado_nascimento }.
+              OPTIONAL{ ?x polbr:place-of-vote ?cidade_estado_eleitoral }
+              OPTIONAL{ ?x biblio:Email ?email }. 
+              OPTIONAL{ ?x pol:Office ?cargo }.
+              OPTIONAL{ ?x polbr:officeState ?cargo_uf }.
+              OPTIONAL{ ?x pol:party ?partido }.
+              OPTIONAL{ ?x polbr:situation ?situacao }. 
+              FILTER isliteral(?ocupacao).
               FILTER isliteral(?cidade_nascimento).
-              FILTER isliteral(?partido)
-                      }LIMIT 1');
+              FILTER isliteral(?estado_nascimento).
+              FILTER isliteral(?partido).
+                      }');
+        
+        $sites = consultaSPARQL("select ?site
+where {
+	<http://ligadonospoliticos.com.br/politico/$recurso> foaf:homepage ?site .
+	}");
+        
         foreach ($sparql1 as $row){
                 $nome_civil = $row['nome_civil'];
 		//$foto = $row['foto'];	
@@ -41,12 +49,12 @@
                
 		echo "<h2>".$nome_civil."&nbsp;&nbsp;<a href='../../../ligadopoliticos/politico/$recurso/rdf' style='decoration:none;'><img src='../../images/rdf_icon.gif' border=0 height='18px' /></a><iframe src='http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fligadonospoliticos.com.br%2Fpolitico%2F".$recurso."%2Fhtml%2F&action=like' scrolling='no' frameborder='0' style='height: 62px; width: 100%' allowTransparency='true'></iframe></h2>";
 		
-		//if(isset($row['foto']) )
-		//http://ligadonospoliticos.com.br/images/politicos/1.jpeg  
-                echo "<div id='foto' style='float:right;'> <img src= ../../images/politicos/".$recurso.".jpeg></div>";
+                if(isset($row['foto']))
+                  echo "<div id='foto' style='float:right;'> <img src= ".$row['foto'].".jpeg></div>";
+                else
+                    echo "<div id='foto' style='float:right;'> <img src= ../../images/politicos/".$recurso.".jpeg></div>";
 		echo "<div id='dados_atuais' style='float:left;'>"; 
                
-
 		if(isset($row['nome_parlamentar']) )
                     if($row['nome_parlamentar']!= null)
 			echo "<b>Nome Parlamentar:</b> ".$row['nome_parlamentar']."<br />";					
@@ -103,9 +111,20 @@
 		if(isset($row['email']) )
                     if($row['email']!= null)
 			echo "<b>E-mail:</b> ".$row['email']."<br />";
-		if(isset($row['site']) )
-                    if($row['site']!= null)
-			echo "<b>Site:</b> <a href='".$row['site']."'>".$row['site']."</a><br />"; 
+                $contSite = 0;
+		if(count($sites) != 0){
+                    if(count($sites) == 1)
+                        echo "<b>Site: </b>";
+                    else
+                        echo "<b>Sites:</b>";
+                    foreach($sites as $site){
+                        echo "<a href='".$site['site']."'>".$site['site']."</a> "; 
+                        $contSite++;
+                        if($contSite == count($site))
+                            echo "<br/>";
+                    }
+                }
+                    
 		
 		
 		if ($nome_parlamentar <> '' AND $nome_parlamentar <> NULL)

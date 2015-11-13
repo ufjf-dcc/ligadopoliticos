@@ -1,6 +1,6 @@
 <?php
 
-$fp = fopen("./politicos1.rdf", "w");
+$fp = fopen("./politicos.rdf", "w");
 $conexao = mysql_connect("localhost","root","123"); 
 if(!$conexao){
     		die('Não foi possível conectar: ' . mysql_error());
@@ -43,8 +43,7 @@ fwrite($fp,'<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 			   xmlns:event="http://purl.org/NET/c4dm/event.owl#"
 			   xmlns:po="http://purl.org/ontology/po"
 		>');
-$id_politicos_validos = mysql_query("select p.id_politico as ids from politico p JOIN eleicao e ON e.id_politico = p.id_politico");
-$contador = 0;
+$id_politicos_validos = mysql_query("select p.id_politico as ids from politico p");
 while ($ids_politicos = mysql_fetch_array($id_politicos_validos))
 { 
     //quantidade total de politicos
@@ -55,7 +54,7 @@ fwrite($fp,'<rdf:Description rdf:about="http://ligadonospoliticos.com.br/politic
 	
 $sql1 = mysql_query("SELECT * FROM politico WHERE id_politico = '$id_politico'");
 while($row = mysql_fetch_array($sql1)){
-	fwrite($fp,'<rdfs:label> Descrição RDF de '.$row['nome_civil'].'</rdfs:label>');
+	fwrite($fp,'<rdfs:label>Descrição RDF de '.$row['nome_civil'].'</rdfs:label>');
 	fwrite($fp,'<dc:creator rdf:resource="'.$site.'/content/foaf.rdf" />');
 	fwrite($fp,'<dc:publisher rdf:resource="'.$site.'/content/foaf.rdf" />');
 	fwrite($fp,'<dc:created>2010-12-02</dc:created>');
@@ -102,7 +101,7 @@ while($row = mysql_fetch_array($sql1)){
 		fwrite($fp,'<bio:mother>'.$row['nome_mae'].'</bio:mother>');
 		
 	if ($row['sexo'] <> '' AND $row['sexo'] <> NULL)		
-		fwrite($fp,'<foaf:gender>'.$row['sexo'].'</foaf:gender>');
+		fwrite($fp,'<foaf:gender>'.strtoupper($row['sexo']).'</foaf:gender>');
 		
 	if ($row['cor'] <> '' AND $row['cor'] <> NULL)	
 		fwrite($fp,'<person:complexion>'.$row['cor']."</person:complexion>");
@@ -111,14 +110,12 @@ while($row = mysql_fetch_array($sql1)){
 		fwrite($fp,'<polbr:maritalStatus>'.$row['estado_civil'].'</polbr:maritalStatus>');
 		
 	if ($row['ocupacao'] <> '' AND $row['ocupacao'] <> NULL){	
+                fwrite($fp,'<person:occupation>'.$row['ocupacao'].'</person:occupation>');
 		$sql18 = mysql_query("SELECT * FROM linkrdf_occupation WHERE ocupacao = '$row[ocupacao]'");
 		$cont18 = mysql_numrows($sql18);
 		if ($cont18 > 0){
 			while ($row18 = mysql_fetch_array($sql18))
 				fwrite($fp,'<person:occupation rdf:resource="'.$row18['uri'].'" />');
-		}
-		else{
-			fwrite($fp,'<person:occupation>'.$row['ocupacao'].'</person:occupation>');
 		}
 	}
 	if ($row['grau_instrucao'] <> '' AND $row['grau_instrucao'] <> NULL)	
@@ -137,15 +134,13 @@ while($row = mysql_fetch_array($sql1)){
 		}
 	}
 	if ($row['estado_nascimento'] <> '' AND $row['estado_nascimento'] <> NULL){	
+                fwrite($fp,'<polbr:state-of-birth>'.$row['estado_nascimento'].'</polbr:state-of-birth>');
 		$sql20 = mysql_query("SELECT * FROM linkrdf_cidades WHERE cidade = '$row[estado_nascimento]'");
 		$cont20 = mysql_numrows($sql20);
 		if ($cont20 > 0){
 			while ($row20 = mysql_fetch_array($sql20))
 				fwrite($fp,'<polbr:state-of-birth rdf:resource="'.$row20['uri'].'" />');
 		}
-		else
-			fwrite($fp,'<polbr:state-of-birth>'.$row['estado_nascimento'].'</polbr:state-of-birth>');
-	
 	}
 	if (($row['cidade_eleitoral'] <> '' AND $row['cidade_eleitoral'] <> NULL) || ($row['estado_eleitoral'] <> '' AND $row['estado_eleitoral'] <> NULL))	 
 		fwrite($fp,'<polbr:place-of-vote>'.$row['cidade_eleitoral'].' - '.$row['estado_eleitoral'].'</polbr:place-of-vote>');
@@ -219,7 +214,7 @@ if ($cont3 > 0){
 			if ($row['cargo_uf'] <> 'BR' AND $row['cargo_uf'] <> '' AND $row['cargo_uf'] <> 'NULL')	
 				fwrite($fp,"<geospecies:State>".$row['cargo_uf']."</geospecies:State>");
 			if ($row['resultado'] <> '' AND $row['resultado'] <> NULL)					
-				fwrite($fp,"<earl:outcome> ".$row['resultado']."</earl:outcome>");					
+				fwrite($fp,"<earl:outcome>".$row['resultado']."</earl:outcome>");					
 			if ($row['nome_coligacao'] <> '' AND $row['nome_coligacao'] <> NULL)					
 				fwrite($fp,"<spinrdf:Union> ".$row['nome_coligacao']."</spinrdf:Union>");
 			if ($row['partidos_coligacao'] <> '' AND $row['partidos_coligacao'] <> NULL)					
@@ -230,6 +225,21 @@ if ($cont3 > 0){
 			fwrite($fp,"<polbr:CNPJ>".$row['cnpj_campanha']."</polbr:CNPJ>");
 		fwrite($fp,"</polbr:election>");
 	}							
+}
+else if($cont3 == 0){
+    $sql1 = mysql_query("SELECT * FROM politico WHERE id_politico = '$id_politico'");
+    while($row = mysql_fetch_array($sql1)){
+        fwrite($fp,"<polbr:election rdf:parseType='Resource'>");
+        fwrite($fp,"<timeline:atYear>2010</timeline:atYear>");
+        if($row['partido'] == NULL || $row['partido'] == '')
+            $row['partido'] = 'S/ Partido';
+        fwrite($fp,"<pol:party>".$row['partido']."</pol:party>");
+        if ($row['cargo'] <> '' AND $row['cargo'] <> NULL)
+            fwrite($fp,"<pol:Office>".$row['cargo']."</pol:Office>");
+        if ($row['cargo_uf'] <> 'BR' AND $row['cargo_uf'] <> '' AND $row['cargo_uf'] <> 'NULL')
+                fwrite($fp, "<geospecies:State>" . $row['cargo_uf'] . "</geospecies:State>");
+        }
+        fwrite($fp,"</polbr:election>");
 }
 
 $sql4 = mysql_query("SELECT * FROM afastamento WHERE id_politico = '$id_politico'");
@@ -297,7 +307,7 @@ if ($cont6 > 0){
 			fwrite($fp,"<foaf:phone>".$row['telefone']."</foaf:phone>");
 		if ($row['fax'] <> '' AND $row['fax'] <> NULL)					
 			fwrite($fp,"<vcard:fax>".$row['fax']."</vcard:fax>");
-		$sql7 = mysql_query("SELECT * FROM endereco_parlamentar WHERE id_endereco_parlamentar = '$row[id_endereco_parlamentar]'");
+		$sql7 = mysql_query("SELECT * FROM endereco_parlamentar WHERE id_endereco_parlamentar = ".$row['id_endereco_parlamentar']);
 	}	
 		
 	while($row = mysql_fetch_array($sql7)){
@@ -321,7 +331,7 @@ $cont8 = mysql_num_rows($sql8);
 if ($cont8 > 0){
 	$conta_lideranca = 1;
 	while($row = mysql_fetch_array($sql8)){
-		fwrite($fp,"<polbr:leadership rdf:parseType='Resource'>");
+                    fwrite($fp,"<polbr:leadership rdf:parseType='Resource'>");
 			$data_inicio = date('d/m/Y', strtotime($row['data_inicio']));
 			$data_fim = date('d/m/Y', strtotime($row['data_fim']));
 			if ($data_fim == '01/01/1970')
@@ -383,7 +393,7 @@ if ($cont10 > 0){
 					fwrite($fp,"<timeline:endsAtDateTime>".$data_fim."</timeline:endsAtDateTime>");
 				fwrite($fp,"<foaf:Document>".$row['documento']."</foaf:Document>");
 			$conta_missao++;
-		fwrite($fp,"</polbr:mission>");
+                fwrite($fp,"</polbr:mission>");
 	}
 }
 
@@ -419,7 +429,7 @@ $cont12 = mysql_num_rows($sql12);
 if ($cont12 <> ''){
 	$conta_pronunciamento = 1;
 	while($row = mysql_fetch_array($sql12)){
-		fwrite($fp,"<biblio:Speech rdf:parseType='Resource'>");
+                fwrite($fp,"<biblio:Speech rdf:parseType='Resource'>");
 			$data = date('d/m/Y', strtotime($row['data']));
 			if ($data == '01/01/1970')
 				$data = '-';
@@ -490,9 +500,8 @@ if ($cont13 > 0){
 fwrite($fp,'</rdf:Description>');
     
         }
-  //  $contador++;
-
-//      }
 fwrite($fp,'</rdf:RDF>');
 fclose($fp);
+
+echo "ACABOU";
 ?>

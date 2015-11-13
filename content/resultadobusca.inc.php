@@ -1,5 +1,4 @@
 <?php
-include ('../consultasSPARQL.php');
 escreve ("<h3>Resultado da Busca</h3>", "<h3>Search Result</h3>");
 
 $conta_selecao = 0;
@@ -17,6 +16,7 @@ $nacionalidade = '';
 $cidade_nascimento = '';
 $estado_nascimento = '';
 $cidade_estado_eleitoral = '';
+$ano = '';
 
 if (isset($_GET['nome']))
 	$nome = $_GET['nome'];
@@ -50,39 +50,39 @@ if (isset($_GET['estado_nascimento']))
 	$estado_nascimento = $_GET['estado_nascimento'];
 if (isset($_GET['cidade_estado_eleitoral']))
 	$cidade_estado_eleitoral = $_GET['cidade_estado_eleitoral'];
-
+if(isset($_GET['ano']))
+        $ano = $_GET['ano'];
 	
 //$consulta=("SELECT p.id_politico, p.nome_civil, p.situacao, p.partido, p.cargo, p.cargo_uf FROM politico p");
 $sparqlConsulta = 'select ?id_politico ?nome_civil ?situacao ?partido ?cargo ?cargo_uf
 where{
-  OPTIONAL{?id_politico foaf:name ?nome_civil}.
-  OPTIONAL{?id_politico polbr:situation ?situacao}.
-  OPTIONAL{?id_politico pol:party ?partido.
-  FILTER isliteral(?partido)}.
-  OPTIONAL{?id_politico pol:Office ?cargo}.
-  OPTIONAL{?id_politico polbr:officeState ?cargo_uf}.
+  ?id_politico foaf:name ?nome_civil.
+  ?id_politico polbr:election ?election.
+  ?election timeline:atYear "'.$ano.'".
+  ?election pol:party ?partido.
+  FILTER isliteral(?partido).
+  OPTIONAL {?election pol:Office ?cargo}.
   ';
-
-/////////////////////////////////////////////
-/*
- if (($situacao == 'Candidato Eleito') || ($situacao == 'Candidato Nao-Eleito') || ($situacao == 'Candidato') || ($nome <> '')){
-	$consulta_eleicao = " JOIN eleicao e ON p.id_politico=e.id_politico";
-	$consulta= $consulta.$consulta_eleicao;
+//Usado quando o campo vem do arquivo politico_html_dados_pessoais.inc.php
+if(!isset($_GET['ano'])){
+    $sparqlConsulta = str_replace('?election timeline:atYear "".', "", $sparqlConsulta);
 }
- */
-
-
-//$consulta=$consulta." WHERE 1";
+///OK
+if ($estado <> ''){
+        $sparqlConsulta = $sparqlConsulta.'?election geospecies:State ?cargo_uf.
+                                           filter(?cargo_uf = "'.$estado.'").
+            ';     
+}
+ else {
+    $sparqlConsulta = $sparqlConsulta.'OPTIONAL{?election geospecies:State ?cargo_uf}.
+            ';
+}
 
 //ok
 if ($situacao == 'Candidato Eleito'){
-	/*
-        $consulta_resultado = " AND e.resultado = 'Eleito'";
-        $consulta= $consulta.$consulta_resultado;
-         */
-        $sparqlConsulta = $sparqlConsulta.' ?id_politico polbr:election ?blank.
-                                            ?blank earl:outcome ?resultado.	
-                                            filter(?resultado = " Eleito").
+        $sparqlConsulta = $sparqlConsulta.' ?election earl:outcome ?resultado.	
+                                            filter(regex(?resultado,"^Eleito.*","i")).
+                                            OPTIONAL{?election polbr:situation ?situacao}.
                                             ';
 }
 //ok
@@ -91,9 +91,9 @@ elseif ($situacao == 'Candidato Nao-Eleito'){
         $consulta_resultado = " AND e.resultado <> 'Eleito'";
 	$consulta= $consulta.$consulta_resultado;
          */
-        $sparqlConsulta = $sparqlConsulta.'?id_politico polbr:election ?blank.
-                                            ?blank earl:outcome ?resultado.	
-                                            filter(?resultado != " Eleito").
+        $sparqlConsulta = $sparqlConsulta.' ?election earl:outcome ?resultado.	
+                                            filter(!regex(?resultado,"^Eleito.*","i")).
+                                            OPTIONAL{?election polbr:situation ?situacao}.
                                             ';
 }
 //valor de situação varia se a consulta for feia pelo filtro inicial ou através de politico_html_dados_pessoais.inc.php
@@ -104,7 +104,13 @@ elseif ($situacao == 'Em Exercicio' || $situacao == 'Fora de Exercicio' || $situ
 	$consulta= $consulta.$consulta_situacao;
          */
         $situacao = str_replace("Exercicio", "exercício", $situacao);
-        $sparqlConsulta = $sparqlConsulta.'filter(?situacao = "'.$situacao.'").
+        $sparqlConsulta = $sparqlConsulta.'?id_politico polbr:situation ?situacao.
+                                           filter(?situacao = "'.$situacao.'").
+                ';
+}
+
+else{
+    $sparqlConsulta = $sparqlConsulta.'?election polbr:situation ?situacao.
                 ';
 }
 //OK
@@ -112,54 +118,36 @@ if ($nome <> ''){
 	//$consulta_nome = " AND p.nome_civil LIKE '%$nome%' OR p.nome_parlamentar LIKE '%$nome%' OR e.nome_urna LIKE '%$nome%'";
 	//$consulta= $consulta.$consulta_nome;
         $nome = mudaNome($nome);
-        $sparqlConsulta = $sparqlConsulta.'optional{?id_politico polbr:governmentalName ?nome_parlamentar.}
-                                            optional{ ?id_politico polbr:election ?blank.
-                                            ?blank foaf:name ?nome_urna.}
+        $sparqlConsulta = $sparqlConsulta.' OPTIONAL{?id_politico polbr:governmentalName ?nome_parlamentar.}
+                                            OPTIONAL{ ?election foaf:name ?nome_urna.}
                                             FILTER (regex(?nome_civil, "'.$nome.'", "i") || regex(?nome_parlamentar, "'.$nome.'", "i")|| regex(?nome_urna, "'.$nome.'", "i")).
-                                            filter (!isblank(?id_politico)).
                                             ';
 }
 //OK
 if ($partido <> ''){
-	$consulta_partido = " AND p.partido = '$partido'";
+	/*
+        $consulta_partido = " AND p.partido = '$partido'";
 	$consulta= $consulta.$consulta_partido;
-        $sparqlConsulta = $sparqlConsulta.'?id_politico pol:party "'.$partido.'".
-            ';
-}
-///OK
-if ($estado <> ''){
-	$consulta_estado = " AND p.cargo_uf = '$estado'";
-	$consulta= $consulta.$consulta_estado;
-        $sparqlConsulta = $sparqlConsulta.'?id_politico polbr:officeState "'.$estado.'".
-            ';
+         */
         
+        $sparqlConsulta = $sparqlConsulta.'?election pol:party "'.$partido.'".
+            ';
 }
 
 /////////////////////////////////////////////
 if ($cargo <> ''){
-  if ($situacao == 'Candidato' || $situacao == 'Candidato Eleito' || $situacao == 'Candidato Nao-Eleito')
-	   //$consulta_cargo = " AND e.cargo = '$cargo'";
-           $consulta_cargo = '?id_politico polbr:election ?blank.
-                              ?blank pol:Office "'.$cargo.'".
-                              ';
-	else
-	   //$consulta_cargo = " AND p.cargo = '$cargo'";
-            $consulta_cargo = 'filter(?cargo = "'.$cargo.'")
-                 ';
-	//$consulta= $consulta.$consulta_cargo;
-        $sparqlConsulta = $sparqlConsulta.$consulta_cargo;
+    $sparqlConsulta = str_replace("OPTIONAL {?election pol:Office ?cargo}.", '?election pol:Office ?cargo. filter(?cargo = "'.$cargo.'").', $sparqlConsulta);
+    //$consulta_cargo = 'filter(?cargo = "'.$cargo.'")
+      //                  ';
+        //$sparqlConsulta = $sparqlConsulta.$consulta_cargo;
 }
 
 if ($sexo <> ''){
-	$consulta_sexo = " AND p.sexo = '$sexo'";
-	$consulta= $consulta.$consulta_sexo;
         $sparqlConsulta = $sparqlConsulta.'?id_politico foaf:gender "'.$sexo.'".
             ';
 }
 
 if ($cor <> ''){
-	$consulta_cor = " AND p.cor = '$cor'";
-	$consulta= $consulta.$consulta_cor;
         $sparqlConsulta = $sparqlConsulta.'?id_politico person:complexion "'.$cor.'".
             ';
 }
@@ -245,7 +233,6 @@ $sparqlConsulta = $sparqlConsulta.'
                     LIMIT '.$registros.'
                     OFFSET '.$inicio;
         
-//echo $sparqlConsulta;
 $sparqlConsulta = consultaSPARQL($sparqlConsulta);        
 //$sparqlConsulta = consultaSPARQL($sparqlConsulta);
 
