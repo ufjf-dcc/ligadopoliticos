@@ -21,8 +21,7 @@ function objectToArray($d) {
 	}
         
 function consultaSPARQL($sparql){
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
+
 $dados = new Constant;
 $login = getProperty($dados->DB_LOGIN_SPARQL);
 $url_sparql = getProperty($dados->DB_URL_SPARQL);
@@ -48,8 +47,9 @@ $curl = curl_init();//inicializando o curl
        
      
        ///////// come��ando a manipula����o de dados/////////////
-       $objects = array();      
+       $objects = array();
        $resultado = json_decode($resposta);//Decodificando o objecto json
+
        
        //pegando o valor de interesse no array//
        foreach($resultado->results->bindings as $reg){// primeiro loop
@@ -61,6 +61,6 @@ $curl = curl_init();//inicializando o curl
 }//sai do segundo loop
            
          $row =  objectToArray($objects);
- return $row;          
+        return $row;
 }   
 ?>

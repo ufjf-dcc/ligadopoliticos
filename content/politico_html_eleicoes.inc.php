@@ -6,7 +6,9 @@
 		echo "<b>Número do Candidato: </b>".$row['numero_candidato']."<br />";
 		echo "<b>Partido: </b>".$row['partido']."<br />";
 		echo "<b>Cargo: </b>".$row['cargo']."<br />";
-		if (isset($row['cargo_uf']))
+		if (isset($row['cidade']))
+                        echo "<b>Cidade: </b>".$row['cidade']."<br />";
+                if (isset($row['cargo_uf']))
                         echo "<b>Estado: </b>".$row['cargo_uf']."<br />";
 		if (isset($row['resultado']))					
 			echo "<b>Resultado:</b> ".$row['resultado']."<br />";					

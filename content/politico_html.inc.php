@@ -5,17 +5,17 @@
 	<meta name="description" content="">
 	<meta name="keywords" content="pol�ticos brasileiros dados governamentais abertos governo eletronico transparencia dados ligados web semantica">
 	<meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
-	<link rel="stylesheet" href="http://ligadonospoliticos.com.br/estilo.css" type="text/css" />
-	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://ligadonospoliticos.com.br/content/foaf.rdf" /> 
-	<script language="javascript" src="http://ligadonospoliticos.com.br/fusioncharts/FusionCharts.js"></script>
+	<link rel="stylesheet" href="http://localhost/ligadopoliticos/estilo.css" type="text/css" />
+	<link rel="meta" type="application/rdf+xml" title="FOAF" href="http://localhost/ligadopoliticos/content/foaf.rdf" /> 
+	<script language="javascript" src="http://localhost/ligadopoliticos/fusioncharts/FusionCharts.js"></script>
 </head>
 <body>
 	<?php 
-                include("properties.php");
-                include("config.php");
+        include("properties.php");
+        include("config.php");
 		include("functions.php");
 		include("content/idioma.inc.php");
-                include ("consultasSPARQL.php");
+        include("consultasSPARQL.php");
 	?>
 
 <div id="tudo">
@@ -46,19 +46,23 @@
 
 				aba_politico_html('No Facebook');
                                 
-				$sparql2 = consultaSPARQL(' select ?tipo ?descricao ?valor 
+				$sparql2a = consultaSPARQL(' select ?tipo ?descricao ?valor ?ano
                                 where{
                                   <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:declarationOfAssets ?x.
+                                  ?x timeline:atYear ?ano.
                                   ?x polbr:DeclarationOfAssets ?y.
                                   ?y dcterms:description ?descricao.
-                                  ?y dcterms:type ?tipo.
-                                  ?y rdfmoney:Price ?valor
-                                  }');
-                                $cont_declaracao_bens = count($sparql2); 
-                                if ($cont_declaracao_bens > 0){	
+                                  OPTIONAL {?y dcterms:type ?tipo.
+                                            filter(!isblank(?tipo))}.
+                                  ?y rdfmoney:Price ?valor.
+                                  }
+                                  order by ?ano');
+                                $cont_declaracao_bens_a = count($sparql2a);
+                                
+                if ($cont_declaracao_bens_a > 0){
 					aba_politico_html('Declaração de Bens');	
 				}
-				
+
 				$sparql6 = consultaSPARQL(' SELECT ?anexo ?ala ?gabinete ?email ?telefone ?fax
                                 WHERE	{
                                         <http://ligadonospoliticos.com.br/politico/'.$recurso.'> vcard:adr ?x
@@ -76,7 +80,7 @@
 				}
                                 
                                 $sparql3 = consultaSPARQL('SELECT ?ano ?nome_urna ?numero_candidato ?situacao_candidatura ?partido ?nome_coligacao ?partidos_coligacao ?cargo ?cargo_uf ?resultado
-                                    ?numero_protocolo ?numero_processo ?cnpj_campanha
+                                    ?numero_protocolo ?numero_processo ?cnpj_campanha ?cidade
                                     WHERE	{
                                       <http://ligadonospoliticos.com.br/politico/'.$recurso.'> polbr:election ?x.
                                                 ?x timeline:atYear ?ano .
@@ -87,13 +91,15 @@
                                                  OPTIONAL{ ?x  geospecies:State ?cargo_uf }.
                                                  OPTIONAL{ ?x earl:outcome ?resultado }.
                                                  OPTIONAL{ ?x spinrdf:Union ?nome_coligacao }.
-                                                 OPTIONAL{ ?x polbr:unionParties ?partidos_coligacao }.  
+                                                 OPTIONAL{ ?x polbr:unionParties ?partidos_coligacao }.
+                                                 OPTIONAL{ ?x geospecies:City ?cidade}.
                                                 ?x polbr:situation ?situacao_candidatura .
                                                 ?x polbr:protocolNumber ?numero_protocolo .
                                                 ?x polbr:processNumber ?numero_processo .
                                                 ?x polbr:CNPJ ?cnpj_campanha .
                                                  FILTER isliteral(?partido)
-                                         }');
+                                         }
+                                         order by ?ano');
                                 $cont_eleicoes = count($sparql3);
 				if ($cont_eleicoes > 0){
 					aba_politico_html('Eleições');
