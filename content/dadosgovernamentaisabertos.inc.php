@@ -1,5 +1,6 @@
 <?php
-
+    include ("head.inc.php");
+    include ("../functions.php");
 escreve("
 <h2>Dados Governamentais Abertos</h2>
 

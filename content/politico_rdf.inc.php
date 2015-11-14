@@ -1,14 +1,19 @@
 <?php
-include("../../../config.php");
+
+$conexao = mysql_connect("localhost","root","123");
+if(!$conexao){
+    		die('Não foi possível conectar: ' . mysql_error());
+	}
+	
+	mysql_select_db("politicos_brasileiros", $conexao);
+	mysql_set_charset("utf8");
 
 header ("content-type: application/rdf+xml");
 
 $site = 'http://ligadonospoliticos.com.br';
 $recurso = $_SERVER ['REQUEST_URI'];
 $parte_endereco = explode('/',$recurso);
-$id_politico = $parte_endereco[2];
-//$id_politico = $parte_endereco[3];
-
+$id_politico = $parte_endereco[3];
 echo '<?xml version="1.0"?>'; 
 echo '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
 			   xmlns:rdfs="http://www.w3.org/2000/01-rdf-schema#"
@@ -158,7 +163,7 @@ if ($cont2 > 0){
 
 
 		echo "<polbr:declarationOfAssets rdf:parseType='Resource'>";
-		echo "<timeline:atYear>"$ano"</timeline:atYear>";   	
+		echo "<timeline:atYear>".$ano."</timeline:atYear>";   	
 		echo "<polbr:DeclarationOfAssets>";
 
 		$sql2c = mysql_query("SELECT descricao,tipo,valor FROM declaracao_bens WHERE id_politico = '$id_politico' and ano = '$ano' ");
@@ -290,8 +295,8 @@ if ($cont6 > 0){
 		echo "<geospecies:State>".$row['estado']."</geospecies:State>";
 		echo "<vcard:postal-code>".$row['CEP']."</vcard:postal-code>";
 		echo "<polbr:CNPJ>".$row['CNPJ']."</polbr:CNPJ>";
-		echo "<foaf:phone>".$row['telefone']."</foaf:phone>";
-		echo "<foaf:phone>".$row['disque']."</foaf:phone>";
+		echo "<polbr:cabinetphone>".$row['telefone']."</foaf:phone>";
+		echo "<polbr:fax>".$row['disque']."</polbr:phone>";
 		echo "<foaf:homepage>".$row['site']."</foaf:homepage>";
 	}
 	echo "</vcard:adr>";
@@ -386,7 +391,8 @@ if ($cont11 <> ''){
 			echo "
 				<po:Place>".$row['casa']."</po:Place>
 				<biblio:Number>".$row['numero']."</biblio:Number>
-				<dcterms:type>".$row['tipo']." - ".$row['descricao_tipo']."</dcterms:type>
+				<dcterms:type>".$row['tipo']."</dcterms:type>
+                                <polbr:description>".$row['descricao_tipo']."</dcterms:description>
 				<dcterms:description>".$row['ementa']."</dcterms:description>";
 			$conta_proposicao++;
 		echo "</polbr:proposition>";

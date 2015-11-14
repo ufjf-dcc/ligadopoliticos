@@ -12,16 +12,14 @@
 		<td>UF</td>	
 		<td>Resumo</td>						
 	</tr>";
-	while($row = mysql_fetch_array($sql12)){
-		$data = date('d/m/Y', strtotime($row['data']));
-		if ($data == '01/01/1970')
-			$data = '-';
-	
+	foreach ($sparql12 as $row){
 		echo "
 		<tr>
 			<td>$conta_pronunciamento</td>
-			<td>".$row['tipo']."</td>
-			<td>".$data."</td>
+			<td>".$row['tipo']."</td>";
+                        if(isset($row['data']))
+			echo "<td>".$row['data']."</td>";
+                        echo "
 			<td>".$row['casa']."</td>
 			<td>".$row['partido']."</td>
 			<td>".$row['uf']."</td>

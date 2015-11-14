@@ -1,20 +1,21 @@
 <?php			
 	echo "<div class='divisao'>Eleições</div>";
-	while($row = mysql_fetch_array($sql3)){
+        foreach ($sparql3 as $row){
 		echo "<b>Ano: </b>".$row['ano']."<br />";
 		echo "<b>Nome para Urna: </b>".$row['nome_urna']."<br />";
 		echo "<b>Número do Candidato: </b>".$row['numero_candidato']."<br />";
 		echo "<b>Partido: </b>".$row['partido']."<br />";
 		echo "<b>Cargo: </b>".$row['cargo']."<br />";
-		echo "<b>Estado: </b>".$row['cargo_uf']."<br />";
-		if ($row['resultado'] <> '' AND $row['resultado'] <> NULL)					
+		if (isset($row['cidade']))
+                        echo "<b>Cidade: </b>".$row['cidade']."<br />";
+                if (isset($row['cargo_uf']))
+                        echo "<b>Estado: </b>".$row['cargo_uf']."<br />";
+		if (isset($row['resultado']))					
 			echo "<b>Resultado:</b> ".$row['resultado']."<br />";					
-		if ($row['nome_coligacao'] <> '' AND $row['nome_coligacao'] <> NULL)					
+		if (isset($row['nome_coligacao']))					
 			echo "<b>Nome da Coligação:</b> ".$row['nome_coligacao']."<br />";
-		if ($row['partidos_coligacao'] <> '' AND $row['partidos_coligacao'] <> NULL)					
+		if (isset($row['partidos_coligacao']))					
 			echo "<b>Partidos da Coligação:</b> ".$row['partidos_coligacao']."<br />";
-		if ($row['prestacao_contas'] <> '' AND $row['prestacao_contas'] <> NULL)					
-			echo "<b>Julgamento da Prestação de Contas:</b> ".$row['prestacao_contas']."<br />";
 		echo "<b>Situação da Candidatura: </b>".$row['situacao_candidatura']."<br />";
 		echo "<b>Número do Protocolo: </b>".$row['numero_protocolo']."<br />";
 		echo "<b>Número do Processo: </b>".$row['numero_processo']."<br />";

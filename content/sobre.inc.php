@@ -1,4 +1,6 @@
 <?php
+    include ("head.inc.php");
+    include ("../functions.php");
 escreve("<h2>Sobre o Projeto</h2>","<h2>About the Project</h2>");
 ?>
 

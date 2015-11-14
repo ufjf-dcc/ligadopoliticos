@@ -1,1 +1,5 @@
 application.properties
+nbproject/project.properties
+nbproject/*
+/simple_html_dom/
+*.htaccess

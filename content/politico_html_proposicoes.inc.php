@@ -12,11 +12,10 @@
 		<td>Tipo</td>	
 		<td>Ementa</td>						
 	</tr>";
-	while($row = mysql_fetch_array($sql11)){
-		$data = date('d/m/Y', strtotime($row['data']));
-		if ($data == '01/01/1970')
-			$data = '-';
-	
+	foreach ($sparql11 as $row){
+            $data = $row['data'];
+            	if ($data == '01/01/1970')
+                        $data = '-';
 		echo "
 		<tr>
 			<td>$conta_proposicao</td>

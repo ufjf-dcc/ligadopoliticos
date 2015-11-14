@@ -1,14 +1,19 @@
 <?php
  $recurso = $_SERVER ['REQUEST_URI'];
- $parte_endereco = explode('/',$recurso);
- $id_politico = $parte_endereco[2];
-
+$parte_endereco = explode('/',$recurso);
+$id_politico = $parte_endereco[3];
+$i = 0;
+$novo_recurso = '';
+while($i <= 3)
+{
+    $novo_recurso = $novo_recurso . $parte_endereco[$i].'/';
+    $i++;
+}
  $redireciona = '';
- $redireciona = $_SERVER['HTTP_ACCEPT'];
  $redireciona =  strstr($redireciona,'rdf');
 	if ($redireciona <> '')
-		header("Location: http://ligadonospoliticos.com.br/politico/$id_politico/rdf");
+		header("Location: ".$novo_recurso."rdf");
 	else
-		header("Location: http://ligadonospoliticos.com.br/politico/$id_politico/html");
+		header("Location: ".$novo_recurso."html");
 		
 ?>
